@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d179008d-84c4-4315-9ed3-29c6fc1ad92b" name="Changes" comment="Inital Commit on Android Emulator" />
+    <list default="true" id="d179008d-84c4-4315-9ed3-29c6fc1ad92b" name="Changes" comment="Inital Commit on Android Emulator">
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/db/AppDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/db/AppDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/db/contact.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/db/contact.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/db/contactDao.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/db/contactDao.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/db/message.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/db/message.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/db/messageDao.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/db/messageDao.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -72,6 +81,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/nschutz/AndroidStudioProjects",
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.17",
     "project.structure.side.proportion": "0.2"
