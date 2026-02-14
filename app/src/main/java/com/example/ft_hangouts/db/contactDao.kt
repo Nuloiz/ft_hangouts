@@ -1,4 +1,4 @@
-package com.contactdao.fthangouts.db
+package com.example.fthangouts.db
 
 import androidx.room.*
 

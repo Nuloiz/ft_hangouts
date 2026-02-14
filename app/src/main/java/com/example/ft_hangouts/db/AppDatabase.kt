@@ -1,4 +1,4 @@
-package com.db.fthangouts.db
+package com.example.fthangouts.db
 
 import android.content.Context
 import androidx.room.Database
