@@ -1,21 +1,125 @@
-package com.example.fthangouts.db
+package com.example.ft_hangouts.db
 
-import androidx.room.*
+import android.content.ContentValues
+import android.content.Context
 
-@Dao //Data Access Object: bündelt zentrale SQL-Abfragen zu Contact und lässt sie einfacher callen
-interface ContactDao {
+class ContactDao(context: Context)
+{
+    private val dbHelper = DatabaseHelper(context)
+    fun getAllContacts(): List<Contact>
+    {
+        val db = dbHelper.readableDatabase
+        val contacts = mutableListOf<Contact>()
+        val cursor = db.query( //query hat viele Parameter die nicht immer benötigt werden, daher null
+            DatabaseHelper.TABLE_CONTACTS,  //table
+            null,                           //columns
+            null,                           //selection
+            null,                           //selectionArgs
+            null,                           //groupBy
+            null,                           //having
+            "${DatabaseHelper.COLUMN_CONTACT_NAME} ASC"
+        )
+        cursor.use { //cursor sind die eingebenen Parameter
+            while (it.moveToNext()) {
+                val id = it.getLong(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_ID))
+                val name = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_NAME))
+                val phone = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_PHONE))
+                val email = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_EMAIL))
+                val address = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_ADDRESS))
+                val note = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_NOTE))
+                val picture_url = it.getString(it.getColumnIndexOrTrow(DatabaseHelper.COLUMN_CONTACT_PICTURE_URL))
 
-    @Query("SELECT * FROM contacts ORDER BY name ASC")
-    suspend fun getAllContacts(): List<Contact>
-    @Query("SELECT * FROM contacts WHERE id = :id")
-    suspend fun getContactById(id: Long): Contact?
+                contacts.add(
+                    Contact(
+                        id = id,
+                        name = name,
+                        phoneNumber = phone,
+                        email = email,
+                        address = address,
+                        note = note
+                        picture_url = picture_url
+                    )
+                )
+            }
+        }
+        return contacts
+    }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertContact(contact: Contact): Long
+    fun getContactById(id: Long): Contact?
+    {
+        val db = dbHelper.readableDatabase
+        val cursor = db.query(
+            DatabaseHelper.TABLE_CONTACTS,
+            null,
+            "${DatabaseHelper.COLUMN_CONTACT_ID} = ?",
+            arrayOf(id.toString()),
+            null,
+            null,
+            null
+        )
+        cursor.use {
+            if (it.moveToFirst()) {
+                val name = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_NAME))
+                val phone = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_PHONE))
+                val email = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_EMAIL))
+                val address = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_ADDRESS))
+                val note = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_NOTE))
+                val picture_url = it.getString(it.getColumnIndexOrTrow(DatabaseHelper.COLUMN_CONTACT_PICTURE_URL))
 
-    @Update
-    suspend fun updateContact(contact: Contact)
+                return Contact(
+                    id = id,
+                    name = name,
+                    phoneNumber = phone,
+                    email = email,
+                    address = address,
+                    note = note
+                    picture_url = picture_url
+                )
+            }
+        }
+        return null
+    }
 
-    @Delete
-    suspend fun deleteContact(contact: Contact)
+    fun insertContact(contact: Contact): Long
+    {
+        val db = dbHelper.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseHelper.COLUMN_CONTACT_NAME, contact.name)
+            put(DatabaseHelper.COLUMN_CONTACT_PHONE, contact.phoneNumber)
+            put(DatabaseHelper.COLUMN_CONTACT_EMAIL, contact.email)
+            put(DatabaseHelper.COLUMN_CONTACT_ADDRESS, contact.address)
+            put(DatabaseHelper.COLUMN_CONTACT_NOTE, contact.note)
+            put(DatabaseHelper.COLUMN_PICTURE_URL, contact.picture_url)
+        }
+        return db.insert(DatabaseHelper.TABLE_CONTACTS, null, values)
+    }
+
+    fun updateContact(contact: Contact): Int
+    {
+        val db = dbHelper.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseHelper.COLUMN_CONTACT_NAME, contact.name)
+            put(DatabaseHelper.COLUMN_CONTACT_PHONE, contact.phoneNumber)
+            put(DatabaseHelper.COLUMN_CONTACT_EMAIL, contact.email)
+            put(DatabaseHelper.COLUMN_CONTACT_ADDRESS, contact.address)
+            put(DatabaseHelper.COLUMN_CONTACT_NOTE, contact.note)
+            put(DatabaseHelper.COLUMN_PICTURE_URL, contact.picture_url)
+        }
+        return db.update(
+            DatabaseHelper.TABLE_CONTACTS,
+            values,
+            "${DatabaseHelper.COLUMN_CONTACT_ID} = ?",
+            arrayOf(contact.id.toString())
+        )
+    }
+
+    fun deleteContact(id: Long): Int {
+        val db = dbHelper.writableDatabase
+        return db.delete(
+            DatabaseHelper.TABLE_CONTACTS,
+            "${DatabaseHelper.COLUMN_CONTACT_ID} = ?",
+            arrayOf(id.toString())
+        )
+    }
 }
+

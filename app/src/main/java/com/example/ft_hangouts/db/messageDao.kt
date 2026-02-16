@@ -1,19 +1,64 @@
-package com.example.fthangouts.db
+package com.example.ft_hangouts.db
 
-import androidx.room.*
+import android.content.ContentValues
+import android.content.Context
 
-@Dao //Data Access Object: bündelt zentrale SQL-Abfragen zu Contact und lässt sie einfacher callen
-interface MessageDao {
+class MessageDao(context: Context)
+{
+    private val dbHelper = DatabaseHelper(context)
+    fun getMessagesForContact(contactId: Long): List<Message>
+    {
+        val db = dbHelper.readableDatabase
+        val messages = mutableListOf<Message>()
+        val cursor = db.query(
+            DatabaseHelper.TABLE_MESSAGES,
+            null,
+            "${DatabaseHelper.COLUMN_MESSAGE_CONTACT_ID} = ?",
+            arrayOf(contactId.toString()),
+            null,
+            null,
+            "${DatabaseHelper.COLUMN_MESSAGE_TIMESTAMP} ASC"
+        )
+        cursor.use {
+            while (it.moveToNext()) {
+                val id = it.getLong(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_MESSAGE_ID))
+                val body = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_MESSAGE_BODY))
+                val timestamp = it.getLong(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_MESSAGE_TIMESTAMP))
+                val direction = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_MESSAGE_DIRECTION))
 
-    @Query("SELECT * FROM messages WHERE contactId = :contactId ORDER BY timestamp ASC")
-    suspend fun getMessagesForContact(contactId: Long): List<Message>
+                messages.add(
+                    Message(
+                        id = id,
+                        contactId = contactId,
+                        body = body,
+                        timestamp = timestamp,
+                        direction = direction
+                    )
+                )
+            }
+        }
+        return messages
+    }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessage(message: Message): Long
+    fun insertMessage(message: Message): Long
+    {
+        val db = dbHelper.writableDatabase
+        val values = ContentValues().apply {
+            put(DatabaseHelper.COLUMN_MESSAGE_CONTACT_ID, message.contactId)
+            put(DatabaseHelper.COLUMN_MESSAGE_BODY, message.body)
+            put(DatabaseHelper.COLUMN_MESSAGE_TIMESTAMP, message.timestamp)
+            put(DatabaseHelper.COLUMN_MESSAGE_DIRECTION, message.direction)
+        }
+        return db.insert(DatabaseHelper.TABLE_MESSAGES, null, values)
+    }
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessages(messages: List<Message>)
-
-    @Query("DELETE FROM messages WHERE contactId = :contactId")
-    suspend fun deleteMessagesForContact(contactId: Long)
+    fun deleteMessagesForContact(contactId: Long): Int
+    {
+        val db = dbHelper.writableDatabase
+        return db.delete(
+            DatabaseHelper.TABLE_MESSAGES,
+            "${DatabaseHelper.COLUMN_MESSAGE_CONTACT_ID} = ?",
+            arrayOf(contactId.toString())
+        )
+    }
 }
