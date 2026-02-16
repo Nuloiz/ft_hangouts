@@ -7,6 +7,6 @@ data class Contact(
     val email: String?,
     val address: String?,
     val note: String?,
-    val picture_url: String?
+    val pictureurl: String?
 )
 

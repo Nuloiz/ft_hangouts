@@ -21,7 +21,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
                 $COLUMN_CONTACT_EMAIL TEXT,
                 $COLUMN_CONTACT_ADDRESS TEXT,
                 $COLUMN_CONTACT_NOTE TEXT,
-                $COLUMN_CONTACT_PICTURE_URL TEXT 
+                $COLUMN_CONTACT_PICTUREURL TEXT 
             )
             """.trimIndent()
         )
@@ -58,6 +58,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         const val COLUMN_CONTACT_EMAIL = "email"
         const val COLUMN_CONTACT_ADDRESS = "address"
         const val COLUMN_CONTACT_NOTE = "note"
+        const val COLUMN_CONTACT_PICTUREURL = "pictureurl"
 
         const val TABLE_MESSAGES = "messages"
         const val COLUMN_MESSAGE_ID = "id"

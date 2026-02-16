@@ -27,7 +27,7 @@ class ContactDao(context: Context)
                 val email = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_EMAIL))
                 val address = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_ADDRESS))
                 val note = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_NOTE))
-                val picture_url = it.getString(it.getColumnIndexOrTrow(DatabaseHelper.COLUMN_CONTACT_PICTURE_URL))
+                val pictureurl = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_PICTUREURL))
 
                 contacts.add(
                     Contact(
@@ -36,8 +36,8 @@ class ContactDao(context: Context)
                         phoneNumber = phone,
                         email = email,
                         address = address,
-                        note = note
-                        picture_url = picture_url
+                        note = note,
+                        pictureurl = pictureurl
                     )
                 )
             }
@@ -64,7 +64,7 @@ class ContactDao(context: Context)
                 val email = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_EMAIL))
                 val address = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_ADDRESS))
                 val note = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_NOTE))
-                val picture_url = it.getString(it.getColumnIndexOrTrow(DatabaseHelper.COLUMN_CONTACT_PICTURE_URL))
+                val pictureurl = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_PICTUREURL))
 
                 return Contact(
                     id = id,
@@ -72,8 +72,8 @@ class ContactDao(context: Context)
                     phoneNumber = phone,
                     email = email,
                     address = address,
-                    note = note
-                    picture_url = picture_url
+                    note = note,
+                    pictureurl = pictureurl
                 )
             }
         }
@@ -89,7 +89,7 @@ class ContactDao(context: Context)
             put(DatabaseHelper.COLUMN_CONTACT_EMAIL, contact.email)
             put(DatabaseHelper.COLUMN_CONTACT_ADDRESS, contact.address)
             put(DatabaseHelper.COLUMN_CONTACT_NOTE, contact.note)
-            put(DatabaseHelper.COLUMN_PICTURE_URL, contact.picture_url)
+            put(DatabaseHelper.COLUMN_CONTACT_PICTUREURL, contact.pictureurl)
         }
         return db.insert(DatabaseHelper.TABLE_CONTACTS, null, values)
     }
@@ -103,7 +103,7 @@ class ContactDao(context: Context)
             put(DatabaseHelper.COLUMN_CONTACT_EMAIL, contact.email)
             put(DatabaseHelper.COLUMN_CONTACT_ADDRESS, contact.address)
             put(DatabaseHelper.COLUMN_CONTACT_NOTE, contact.note)
-            put(DatabaseHelper.COLUMN_PICTURE_URL, contact.picture_url)
+            put(DatabaseHelper.COLUMN_CONTACT_PICTUREURL, contact.pictureurl)
         }
         return db.update(
             DatabaseHelper.TABLE_CONTACTS,
