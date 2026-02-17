@@ -1,8 +1,7 @@
 package com.example.ft_hangouts.ui
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -14,9 +13,18 @@ fun MainScreen(
     contactDao: ContactDao
 ) {
     Column(
-        modifier = modifier.padding(16.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        Text(text = "ft_hangouts")
+        Text(
+            text = "ft_hangouts",
+            style = MaterialTheme.typography.headlineLarge
+        )
+        Spacer(modifier = Modifier.height(24.dp))
         Testbuttondb(contactDao = contactDao)
+        Spacer(modifier = Modifier.height(16.dp))
+        ShowContactListButton(contactDao = contactDao)
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
