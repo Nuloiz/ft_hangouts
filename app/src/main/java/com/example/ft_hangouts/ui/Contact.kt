@@ -27,7 +27,6 @@ fun ContactList(
     contactDao: ContactDao
 ) {
     val contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
-
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
