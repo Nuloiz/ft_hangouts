@@ -1,6 +1,8 @@
 package com.example.ft_hangouts
 
 import android.os.Bundle
+import android.widget.Button
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -30,27 +32,26 @@ class MainActivity : ComponentActivity() {
             }
         }
         val contactDao = ContactDao(this)
-
-// DB TEST
-        /*
-        val newId = contactDao.insertContact(
-            Contact(
-                name = "Test User",
-                phoneNumber = "+49123456789",
-                email = "test@example.com",
-                address = "Teststraße 1",
-                note = "Erster Testkontakt",
-                pictureurl = null
+        val buttonTestdb: Button = findViewById(R.id.buttonTestdb)
+        buttonTestdb.setOnClickListener {
+            val newId = contactDao.insertContact(
+                Contact(
+                    name = "Test User",
+                    phoneNumber = "+49123456789",
+                    email = "test@example.com",
+                    address = "Teststraße 1",
+                    note = "Erster Testkontakt",
+                    pictureurl = null
+                )
             )
-        )
-        val allContacts = contactDao.getAllContacts()
-        val insertedContact = contactDao.getContactById(newId)
-        android.widget.Toast.makeText(
-            this,
-            "DB OK: ${allContacts.size} Kontakte",
-            android.widget.Toast.LENGTH_SHORT
-        ).show()
-        */
+            val allContacts = contactDao.getAllContacts()
+
+            Toast.makeText(
+                this,
+                "DB OK: ${allContacts.size} Kontakte",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 }
 
