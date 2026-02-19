@@ -8,9 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import com.example.ft_hangouts.ui.AppScreens.*
+import com.example.ft_hangouts.ui.AppScreenRouter
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.ui.theme.Ft_hangoutsTheme
 
@@ -21,14 +20,8 @@ class MainActivity : ComponentActivity() {
         val contactDao = ContactDao(this)
         setContent {
             Ft_hangoutsTheme {
-                val navController = rememberNavController()
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavHost(
-                        navController = navController,
-                        modifier = Modifier.padding(innerPadding),
-                        contactDao = contactDao
-                    )
-                }
+                val currentScreen by remember { mutableStateOf(START) }
+                AppScreenRouter(currentScreen = currentScreen, contactDao = contactDao)
             }
         }
     }
