@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.ft_hangouts.db.ContactDao
+import com.example.ft_hangouts.ui.StartScreen
 
 @Composable
 fun AppNavHost(

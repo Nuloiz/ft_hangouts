@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.ft_hangouts.db.ContactDao
-import com.example.ft_hangouts.ui.MainScreen
 import com.example.ft_hangouts.ui.theme.Ft_hangoutsTheme
 
 class MainActivity : ComponentActivity() {

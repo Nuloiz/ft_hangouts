@@ -9,8 +9,8 @@ import com.example.ft_hangouts.db.ContactDao
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> NewChat (-> ExistingUser, -> NewUser), -> AktualisierenMain
 
-@Composable
+/*@Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao
-) 
+)*/ 
