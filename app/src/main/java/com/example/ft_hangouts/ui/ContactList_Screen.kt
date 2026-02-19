@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 
+//Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> CreateContact
+
 @Composable
 fun ShowContactListButton(contactDao: ContactDao) {
     var showList by remember { mutableStateOf(false) }

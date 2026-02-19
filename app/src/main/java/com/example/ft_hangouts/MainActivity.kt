@@ -19,8 +19,10 @@ class MainActivity : ComponentActivity() {
         val contactDao = ContactDao(this)
         setContent {
             Ft_hangoutsTheme {
+                val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(
+                    AppNavHost(
+                        navController = navController,
                         modifier = Modifier.padding(innerPadding),
                         contactDao = contactDao
                     )
