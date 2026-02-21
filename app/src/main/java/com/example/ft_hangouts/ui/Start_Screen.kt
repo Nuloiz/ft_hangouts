@@ -27,6 +27,11 @@ fun StartScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = "Start_Screen",
+            style = MaterialTheme.typography.headlineLarge
+        )
+        Spacer(modifier = Modifier.height(24.dp))
         Testbuttondb(contactDao = contactDao)
         Spacer(modifier = Modifier.height(16.dp))
         ShowContactListButton(contactDao = contactDao)
