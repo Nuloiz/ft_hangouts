@@ -30,11 +30,11 @@ fun ContactListScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
-        ContactList(contactDao = contactDao)
-        Spacer(modifier = Modifier.height(24.dp))
-        ButtonStarttoMain(onNavigateToMain = onNavigateToMain)
+        ButtonContactListtoMain(onNavigateToMain = onNavigateToMain)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonMaintoSettings(onNavigateToSettings = onNavigateToSettings)
+        ButtonContactListtoSettings(onNavigateToSettings = onNavigateToSettings)
+        Spacer(modifier = Modifier.height(24.dp))
+        ContactList(contactDao = contactDao)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -82,5 +82,19 @@ fun ContactListItem(contact: Contact) {
                 )
             }
         }
+    }
+}
+
+
+@Composable
+fun ButtonContactListtoMain(onNavigateToMain: () -> Unit) {
+    Button(onClick = onNavigateToMain) {
+        Text("To Main Screen")
+    }
+}
+@Composable
+fun ButtonContactListtoSettings(onNavigateToSettings: () -> Unit) {
+    Button(onClick = onNavigateToSettings) {
+        Text("To Settings Screen")
     }
 }
