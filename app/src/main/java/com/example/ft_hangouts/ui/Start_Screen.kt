@@ -6,10 +6,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dbHelper
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
+import com.example.ft_hangouts.db.ContactDao
 
 //Buttons: -> MainScreen, -> ContactListScreen, -> Settingsscreen
 
