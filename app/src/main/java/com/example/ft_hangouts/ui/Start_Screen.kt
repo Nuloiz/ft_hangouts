@@ -16,7 +16,9 @@ import com.example.ft_hangouts.db.ContactDao
 fun StartScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
-    onNavigateToMain: () -> Unit
+    onNavigateToMain: () -> Unit,
+    onNavigateToContactList: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -39,6 +41,10 @@ fun StartScreen(
         Spacer(modifier = Modifier.height(16.dp))
         ButtonStarttoMain(onNavigateToMain = onNavigateToMain)
         Spacer(modifier = Modifier.height(16.dp))
+        ButtonStarttoContactList(onNavigateToContactList = onNavigateToContactList)
+        Spacer(modifier = Modifier.height(16.dp))
+        ButtonStarttoSettings(onNavigateToSettings = onNavigateToSettings)
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -46,5 +52,19 @@ fun StartScreen(
 fun ButtonStarttoMain(onNavigateToMain: () -> Unit) {
     Button(onClick = onNavigateToMain) {
         Text("To Main Screen")
+    }
+}
+
+@Composable
+fun ButtonStarttoContactList(onNavigateToContactList: () -> Unit) {
+    Button(onClick = onNavigateToContactList) {
+        Text("To Contact List Screen")
+    }
+}
+
+@Composable
+fun ButtonStarttoSettings(onNavigateToSettings: () -> Unit) {
+    Button(onClick = onNavigateToSettings) {
+        Text("To Settings Screen")
     }
 }
