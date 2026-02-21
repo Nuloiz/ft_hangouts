@@ -17,7 +17,8 @@ import androidx.compose.runtime.Composable
 fun ContactListScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
-    onNavigateToMain: () -> Unit)
+    onNavigateToMain: () -> Unit,
+    onNavigateToSettings: () -> Unit)
 {
     Column(
         modifier = modifier
@@ -29,6 +30,12 @@ fun ContactListScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
+        ContactList(contactDao = contactDao)
+        Spacer(modifier = Modifier.height(24.dp))
+        ButtonStarttoMain(onNavigateToMain = onNavigateToMain)
+        Spacer(modifier = Modifier.height(16.dp))
+        ButtonMaintoSettings(onNavigateToSettings = onNavigateToSettings)
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 @Composable

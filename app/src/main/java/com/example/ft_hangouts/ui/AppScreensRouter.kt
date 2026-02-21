@@ -21,6 +21,6 @@ fun AppScreenRouter(
         Settings -> SettingsScreen(contactDao = contactDao, onNavigateToStart = { onNavigate(Start)})
         Chat -> ChatScreen(contactDao = contactDao, onNavigateToMain = { onNavigate(Main)})
         Contact-> ContactScreen(contactDao = contactDao, onNavigateToMain = { onNavigate(Main)})
-        ContactList -> ContactListScreen(contactDao = contactDao, onNavigateToMain = { onNavigate(Main)})
+        ContactList -> ContactListScreen(contactDao = contactDao, onNavigateToMain = { onNavigate(Main)}, onNavigateToSettings = { onNavigate(Settings)})
     }
 }
