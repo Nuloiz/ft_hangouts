@@ -4,6 +4,10 @@ import android.widget.Toast
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
@@ -32,5 +36,16 @@ fun Testbuttondb(contactDao: ContactDao) {
         ).show()
     }) {
         Text("Test DB")
+    }
+}
+
+@Composable
+fun TestButtonContactList(contactDao: ContactDao) {
+    var showList by remember { mutableStateOf(false) }
+    Button(onClick = { showList = !showList }) {
+        Text(if (showList) "Hide Contact List" else "Test Contact List")
+    }
+    if (showList) {
+        ContactList(contactDao = contactDao)
     }
 }

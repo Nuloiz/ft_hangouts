@@ -12,16 +12,6 @@ import com.example.ft_hangouts.db.ContactDao
 
 //Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> CreateContact
 
-@Composable
-fun ShowContactListButton(contactDao: ContactDao) {
-    var showList by remember { mutableStateOf(false) }
-    Button(onClick = { showList = !showList }) {
-        Text(if (showList) "Hide Contact List" else "Show Contact List")
-    }
-    if (showList) {
-        ContactList(contactDao = contactDao)
-    }
-}
 
 @Composable
 fun ContactList(

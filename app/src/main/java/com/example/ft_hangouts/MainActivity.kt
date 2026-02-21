@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Ft_hangoutsTheme {
                 val currentScreen by remember { mutableStateOf(Start) }
-                AppScreenRouter(currentScreen = currentScreen, contactDao = contactDao)
+                AppScreenRouter(currentScreen = currentScreen,  onNavigate = { newScreen -> currentScreen = newScreen },contactDao = contactDao)
             }
         }
     }
