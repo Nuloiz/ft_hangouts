@@ -13,7 +13,7 @@ import com.example.ft_hangouts.db.ContactDao
 fun MainScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
-    onNavigateToMain: () -> Unit
+    onNavigateToSettings: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -25,5 +25,14 @@ fun MainScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
+        ButtonMaintoSettings(onNavigateToSettings = onNavigateToSettings)
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun ButtonMaintoSettings(onNavigateToSettings: () -> Unit) {
+    Button(onClick = onNavigateToSettings) {
+        Text("To Settings Screen")
     }
 }
