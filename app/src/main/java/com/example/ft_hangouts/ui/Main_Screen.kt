@@ -12,7 +12,8 @@ import com.example.ft_hangouts.db.ContactDao
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    contactDao: ContactDao
+    contactDao: ContactDao,
+    onNavigateToMain: () -> Unit
 ) {
     Column(
         modifier = modifier

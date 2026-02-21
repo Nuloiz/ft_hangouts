@@ -11,12 +11,13 @@ import com.example.ft_hangouts.ui.AppScreens.*
 @Composable
 fun AppScreenRouter(
     currentScreen: AppScreens,
+    onNavigate: (AppScreens) -> Unit,
     contactDao: ContactDao)
 {
     when (currentScreen)
     {
-        Start -> StartScreen(contactDao = contactDao)
-        Main -> MainScreen(contactDao = contactDao)
+        Start -> StartScreen(contactDao = contactDao, onNavigateToMain = { onNavigate(Main)})
+        Main -> MainScreen(contactDao = contactDao, onNavigateToMain = { onNavigate(Main)})
         //Settings -> SettingsScreen(contactDao = contactDao)
         //Chat -> ChatScreen(contactDao = contactDao)
         //Contact-> ContactScreen(contactDao = contactDao)
