@@ -33,6 +33,6 @@ fun SettingsScreen(
 @Composable
 fun ButtonSettingstoStart(onNavigateToStart: () -> Unit) {
     Button(onClick = onNavigateToStart) {
-        Text("To Settings Screen")
+        Text("To Start Screen")
     }
 }
