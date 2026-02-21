@@ -9,10 +9,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
+import androidx.compose.runtime.Composable
 
 //Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> CreateContact
 
-
+@Composable
+fun ContactListScreen(
+    modifier: Modifier = Modifier,
+    contactDao: ContactDao,
+    onNavigateToMain: () -> Unit)
+{
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Contact List Screen",
+            style = MaterialTheme.typography.headlineLarge
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+    }
+}
 @Composable
 fun ContactList(
     modifier: Modifier = Modifier,
