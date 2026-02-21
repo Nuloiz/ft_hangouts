@@ -16,10 +16,10 @@ fun AppScreenRouter(
     when (currentScreen)
     {
         Start -> StartScreen(contactDao = contactDao)
-        Main -> MainScreen(contactDao = contactDao)
-        Settings -> SettingsScreen(contactDao = contactDao)
-        Chat -> ChatScreen(contactDao = contactDao)
-        Contact-> ContactScreen(contactDao = contactDao)
-        ContactList -> ContactListScreen(contactDao = contactDao)
+        //Main -> MainScreen(contactDao = contactDao)
+        //Settings -> SettingsScreen(contactDao = contactDao)
+        //Chat -> ChatScreen(contactDao = contactDao)
+        //Contact-> ContactScreen(contactDao = contactDao)
+        //ContactList -> ContactListScreen(contactDao = contactDao)
     }
 }
