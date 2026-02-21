@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.example.ft_hangouts.ui.AppScreens.*
+import com.example.ft_hangouts.ui.AppScreens
 import com.example.ft_hangouts.ui.AppScreenRouter
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.ui.theme.Ft_hangoutsTheme
@@ -24,8 +25,12 @@ class MainActivity : ComponentActivity() {
         val contactDao = ContactDao(this)
         setContent {
             Ft_hangoutsTheme {
-                val currentScreen by remember { mutableStateOf(Start) }
-                AppScreenRouter(currentScreen = currentScreen,  onNavigate = { newScreen -> currentScreen = newScreen },contactDao = contactDao)
+                var currentScreen by remember { mutableStateOf<AppScreens>(Start) }
+                AppScreenRouter(
+                    currentScreen = currentScreen,
+                    onNavigate = { newScreen: AppScreens -> currentScreen = newScreen },
+                    contactDao = contactDao
+                )
             }
         }
     }
