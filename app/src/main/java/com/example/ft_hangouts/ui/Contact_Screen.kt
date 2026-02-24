@@ -24,10 +24,19 @@ fun ContactScreen(
             if (!contact.email.isNullOrBlank()) {
                 Text("Email: ${contact.email}")
             }
+            if (!contact.address.isNullOrBlank()) {
+                Text("Address: ${contact.address}")
+            }
+            if (!contact.note.isNullOrBlank()) {
+                Text("Note: ${contact.note}")
+            }
+            if (!contact.pictureurl.isNullOrBlank()) {
+                Text("Picture: ${contact.pictureurl}")
+            }
             Spacer(modifier = Modifier.height(16.dp))
         } else {
             // Edge Case redirect to ContactListScreen
-            Text("Allgemeiner Contact‑Übersicht")
+            Text("Error Contact not found")
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onNavigateToContactList) { Text("Zurück zur Liste") }
