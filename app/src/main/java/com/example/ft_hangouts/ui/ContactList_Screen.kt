@@ -1,5 +1,6 @@
 package com.example.ft_hangouts.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 
 //Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> CreateContact
 
@@ -33,6 +35,8 @@ fun ContactListScreen(
         ButtonContactListtoMain(onNavigateToMain = onNavigateToMain)
         Spacer(modifier = Modifier.height(16.dp))
         ButtonContactListtoSettings(onNavigateToSettings = onNavigateToSettings)
+        Spacer(modifier = Modifier.height(24.dp))
+        ButtonCreateContact(contactDao = contactDao)
         Spacer(modifier = Modifier.height(24.dp))
         ContactList(contactDao = contactDao)
         Spacer(modifier = Modifier.height(16.dp))
@@ -96,5 +100,25 @@ fun ButtonContactListtoMain(onNavigateToMain: () -> Unit) {
 fun ButtonContactListtoSettings(onNavigateToSettings: () -> Unit) {
     Button(onClick = onNavigateToSettings) {
         Text("To Settings Screen")
+    }
+}
+
+@Composable
+fun ButtonCreateContact(contactDao: ContactDao) {
+    val context = LocalContext.current
+
+    Button(onClick = {
+        val newId = contactDao.insertContact(
+            Contact(
+                name = "New User",
+                phoneNumber = "0123456789",
+                email = "user@example.com",
+                address = "Neue Straße 1",
+                note = "New Contact",
+                pictureurl = null
+            )
+        )
+    }) {
+        Text("Create Contact")
     }
 }
