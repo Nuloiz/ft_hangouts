@@ -15,7 +15,8 @@ import com.example.ft_hangouts.db.Contact
 fun ContactScreen(
     contact: Contact?,
     contactDao: ContactDao,
-    onNavigateToContactList: () -> Unit
+    onNavigateToContactList: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
         if (contact != null) {
@@ -40,5 +41,7 @@ fun ContactScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onNavigateToContactList) { Text("Zurück zur Liste") }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onNavigateToSettings) { Text("to Settings") }
     }
 }
