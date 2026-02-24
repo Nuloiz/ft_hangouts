@@ -1,6 +1,7 @@
 package com.example.ft_hangouts.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,7 +21,8 @@ fun ContactListScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
     onNavigateToMain: () -> Unit,
-    onNavigateToSettings: () -> Unit)
+    onNavigateToSettings: () -> Unit,
+    onNavigateToContact: (Contact) -> Unit)
 {
     Column(
         modifier = modifier
@@ -38,14 +40,15 @@ fun ContactListScreen(
         Spacer(modifier = Modifier.height(24.dp))
         ButtonCreateContact(contactDao = contactDao)
         Spacer(modifier = Modifier.height(24.dp))
-        ContactList(contactDao = contactDao)
+        ContactList(contactDao = contactDao, onContactClick = onNavigateToContact)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
 @Composable
 fun ContactList(
     modifier: Modifier = Modifier,
-    contactDao: ContactDao
+    contactDao: ContactDao,
+    onContactClick: (Contact) -> Unit
 ) {
     val contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
     LazyColumn(
@@ -53,15 +56,21 @@ fun ContactList(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(contacts) { contact ->
-            ContactListItem(contact = contact)
+            ContactListItem(contact = contact, onClick = { onContactClick(contact) }
+            )
         }
     }
 }
 
 @Composable
-fun ContactListItem(contact: Contact) {
+fun ContactListItem(
+    contact: Contact,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
     ) {
         Column(
             modifier = Modifier
