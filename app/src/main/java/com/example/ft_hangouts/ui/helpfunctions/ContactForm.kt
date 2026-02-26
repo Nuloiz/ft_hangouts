@@ -2,10 +2,11 @@ package com.example.ft_hangouts.ui.helpfunctions
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.db.Contact
 
@@ -22,7 +23,6 @@ fun ContactFormDialog(
     var address by remember { mutableStateOf(initialContact?.address ?: "") }
     var note by remember { mutableStateOf(initialContact?.note ?: "") }
     var pictureUrl by remember { mutableStateOf(initialContact?.pictureurl ?: "") }
-
     var validation by remember { mutableStateOf(ContactValidationResult()) }
 
     AlertDialog(
