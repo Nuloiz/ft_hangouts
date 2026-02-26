@@ -8,12 +8,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.Composable
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
-import androidx.compose.runtime.Composable
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.TextButton
+import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
 
 //Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> CreateContact
 
@@ -119,89 +117,17 @@ fun ButtonCreateContact(
     onContactCreated: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf("") }
-    var phoneNumber by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var note by remember { mutableStateOf("") }
     Button(onClick = { showDialog = true }) {
         Text("Create Contact")
     }
     if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Neuen Kontakt erstellen") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Name") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = phoneNumber,
-                        onValueChange = { phoneNumber = it },
-                        label = { Text("Telefonnummer") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        label = { Text("Email") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = address,
-                        onValueChange = { address = it },
-                        label = { Text("Address") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = note,
-                        onValueChange = { note = it },
-                        label = { Text("Note") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        if (name.isNotBlank() && phoneNumber.isNotBlank()) {
-                            try {
-                                val newId = contactDao.insertContact(
-                                    Contact(
-                                        id = 0L, // ID wird von der Database generiert
-                                        name = name,
-                                        phoneNumber = phoneNumber,
-                                        email = email,
-                                        address = address,
-                                        note = note,
-                                        pictureurl = null
-                                    )
-                                )
-                                showDialog = false
-                                name = ""
-                                phoneNumber = ""
-                                onContactCreated()
-                            } catch (e: Exception) {
-
-                            }
-                        }
-                    }
-                ) {
-                    Text("Erstellen")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text("Abbrechen")
-                }
+        ContactFormDialog(
+            isCreateMode = true,
+            onDismiss = { showDialog = false },
+            onSave = { newContact ->
+                contactDao.insertContact(newContact)
+                showDialog = false
+                onContactCreated()
             }
         )
     }

@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.delay
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Contact
+import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
 
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> editContact, -> deleteContact
@@ -101,89 +102,18 @@ fun ButtonEditContact(
     onContactUpdated: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf(contact?.name ?: "") }
-    var phoneNumber by remember { mutableStateOf(contact?.phoneNumber ?: "") }
-    var email by remember { mutableStateOf(contact?.email ?: "") }
-    var address by remember { mutableStateOf(contact?.address ?: "") }
-    var note by remember { mutableStateOf(contact?.note ?: "") }
-    var pictureurl by remember { mutableStateOf(contact?.pictureurl ?: "") }
-
-    Button(onClick = {
-        if (contact != null) showDialog = true
-    }) {
+    Button(onClick = { if (contact != null) showDialog = true }) {
         Text("Edit Contact")
     }
-
     if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Kontakt bearbeiten") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Name") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = phoneNumber,
-                        onValueChange = { phoneNumber = it },
-                        label = { Text("Telefonnummer") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        label = { Text("Email") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = address,
-                        onValueChange = { address = it },
-                        label = { Text("Adresse") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = note,
-                        onValueChange = { note = it },
-                        label = { Text("Notiz") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = pictureurl,
-                        onValueChange = { pictureurl = it },
-                        label = { Text("Bildurl") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            },
-            confirmButton = {
-                Button(onClick = {
-                    if (contact != null && name.isNotBlank() && phoneNumber.isNotBlank()) {
-                        try {
-                            val updatedContact = contact.copy(
-                                name = name,
-                                phoneNumber = phoneNumber,
-                                email = if (email.isBlank()) null else email,
-                                address = if (address.isBlank()) null else address,
-                                note = if (note.isBlank()) null else note,
-                                pictureurl = if (note.isBlank()) null else pictureurl
-                            )
-                            contactDao.updateContact(updatedContact)
-                            showDialog = false
-                            onContactUpdated()
-                        } catch (e: Exception) {
-                        }
-                    }
-                }) {
-                    Text("Speichern")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text("Abbrechen")
-                }
+        ContactFormDialog(
+            isCreateMode = false,
+            initialContact = contact,
+            onDismiss = { showDialog = false },
+            onSave = { updatedContact ->
+                contactDao.updateContact(updatedContact)
+                showDialog = false
+                onContactUpdated()
             }
         )
     }
