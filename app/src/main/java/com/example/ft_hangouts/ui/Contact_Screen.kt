@@ -69,7 +69,6 @@ fun ContactScreen(
         Spacer(modifier = Modifier.height(16.dp))
         ButtonDeleteContact(contact = contact, contactDao = contactDao, onResult = { success -> showMessage = if (success) "success" else "failed" })
         Spacer(modifier = Modifier.height(16.dp))
-
     }
 }
 
@@ -154,7 +153,7 @@ fun ButtonEditContact(
                     OutlinedTextField(
                         value = pictureurl,
                         onValueChange = { pictureurl = it },
-                        label = { Text("Bildurl (optional)") },
+                        label = { Text("Bildurl") },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
