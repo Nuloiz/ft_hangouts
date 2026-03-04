@@ -3,7 +3,6 @@ package com.example.ft_hangouts.ui.helpfunctions
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -145,7 +144,7 @@ private fun ContactTextField(
     label: String,
     error: String?,
     maxLength: Int,
-    keyboardOptions: androidx.compose.ui.text.input.KeyboardOptions
+    keyboardOptions: KeyboardOptions
 ) {
     OutlinedTextField(
         value = value,
