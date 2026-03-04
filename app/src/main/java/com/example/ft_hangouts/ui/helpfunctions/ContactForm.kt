@@ -7,6 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.net.Uri
 import com.example.ft_hangouts.db.Contact
 
 @Composable
@@ -24,6 +27,11 @@ fun ContactFormDialog(
     var pictureUrl by remember { mutableStateOf(initialContact?.pictureurl ?: "") }
     var validation by remember { mutableStateOf(ContactValidationResult()) }
 
+    val imageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        pictureUrl = uri?.toString() ?: ""
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -90,8 +98,9 @@ fun ContactFormDialog(
                 )
 
                 GalleryImagePickerField(
-                    pictureUrl = pictureUrl
-                ) { newPictureUrl -> pictureUrl = newPictureUrl ?: "" }
+                    pictureUrl = pictureUrl,
+                    onPictureUrlChanged = { newUrl: String? -> pictureUrl = newUrl ?: "" }
+                )
             }
         },
         confirmButton = {

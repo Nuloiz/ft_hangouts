@@ -5,8 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -25,25 +24,15 @@ fun GalleryImagePickerField(
     pictureUrl: String,
     onPictureUrlChanged: (String?) -> Unit
 ) {
-    val context = LocalContext.current
-    val resolver = context.contentResolver
-    var selectedUri by remember(pictureUrl) {
-        mutableStateOf(
-            pictureUrl.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
-        )
-    }
-    var bitmap by remember(selectedUri) { mutableStateOf<Bitmap?>(null) }
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        selectedUri = uri
-        onPictureUrlChanged(uri?.toString())  // ← direkt an Dialog zurückgeben
-    }
-    LaunchedEffect(selectedUri) {
-        bitmap = selectedUri?.let { loadBitmapFromUri(resolver, it) }
+    val resolver = LocalContext.current.contentResolver
+    var bitmap by remember(pictureUrl) { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(pictureUrl) {
+        bitmap = pictureUrl.takeIf { it.isNotBlank() }?.let {
+            Uri.parse(it).let { uri -> loadBitmapFromUri(resolver, uri) }
+        }
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Button(onClick = { launcher.launch("image/*") }) {
+        Button(onClick = {}) {
             Text("Choose picture")
         }
         bitmap?.let { bmp ->
