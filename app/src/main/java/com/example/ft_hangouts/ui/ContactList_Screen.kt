@@ -23,6 +23,10 @@ fun ContactListScreen(
     onNavigateToSettings: () -> Unit,
     onNavigateToContact: (Contact) -> Unit)
 {
+    var contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
+    fun reloadScreen() {
+        contacts = contactDao.getAllContacts()
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -37,19 +41,18 @@ fun ContactListScreen(
         Spacer(modifier = Modifier.height(16.dp))
         ButtonContactListtoSettings(onNavigateToSettings = onNavigateToSettings)
         Spacer(modifier = Modifier.height(24.dp))
-        ButtonCreateContact(contactDao = contactDao, onContactCreated = {})
+        ButtonCreateContact(contactDao = contactDao, onContactCreated = {reloadScreen()})
         Spacer(modifier = Modifier.height(24.dp))
-        ContactList(contactDao = contactDao, onContactClick = onNavigateToContact)
+        ContactList(contacts = contacts, onContactClick = onNavigateToContact)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
 @Composable
 fun ContactList(
     modifier: Modifier = Modifier,
-    contactDao: ContactDao,
+    contacts: List<Contact>,
     onContactClick: (Contact) -> Unit
 ) {
-    val contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
