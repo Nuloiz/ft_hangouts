@@ -89,14 +89,11 @@ fun ContactFormDialog(
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
                 )
 
-                ContactTextField(
-                    value = pictureUrl,
-                    onValueChange = { if (it.length <= 100) pictureUrl = it },
-                    label = "Bild-URL (optional)",
-                    error = validation.pictureUrlError,
-                    maxLength = 100,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Uri)
-                )
+                GalleryImagePickerField(
+                    initialUriString = initialContact?.pictureurl
+                ) { newUriString ->
+                    pictureUrl = newUriString ?: ""
+                }
             }
         },
         confirmButton = {
