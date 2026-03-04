@@ -15,7 +15,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.ft_hangouts.R
+import com.example.ft_hangouts.db.Contact
+
 @Composable
 fun GalleryImagePickerField(initialUriString: String?, onImageChanged: (String?) -> Unit)
 {
@@ -69,5 +73,44 @@ private fun loadBitmapFromUri(
         }
     } catch (e: Exception) {
         null
+    }
+}
+
+@Composable
+fun ContactPicture(contact: Contact?) {
+    val context = LocalContext.current
+    val resolver = context.contentResolver
+    val pictureUrl = contact?.pictureurl
+    var bitmap by remember(pictureUrl) { mutableStateOf<Bitmap?>(null) }
+    LaunchedEffect(pictureUrl) {
+        bitmap = null
+        if (!pictureUrl.isNullOrBlank()) {
+            try {
+                val uri = Uri.parse(pictureUrl)
+                bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    val source = ImageDecoder.createSource(resolver, uri)
+                    ImageDecoder.decodeBitmap(source)
+                } else {
+                    @Suppress("DEPRECATION")
+                    MediaStore.Images.Media.getBitmap(resolver, uri)
+                }
+            } catch (e: Exception) {
+                bitmap = null
+            }
+        }
+    }
+
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap!!.asImageBitmap(),
+            contentDescription = "Profile picture",
+            modifier = Modifier.size(72.dp)
+        )
+    } else {
+        Image(
+            painter = painterResource(id = R.drawable.default_picture),
+            contentDescription = "Default profile picture",
+            modifier = Modifier.size(72.dp)
+        )
     }
 }

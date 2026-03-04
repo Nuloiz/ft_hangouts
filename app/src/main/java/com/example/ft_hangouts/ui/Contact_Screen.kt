@@ -12,10 +12,7 @@ import kotlinx.coroutines.delay
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
-import androidx.compose.foundation.Image
-import androidx.compose.ui.res.painterResource
-import com.example.ft_hangouts.R
-
+import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> editContact, -> deleteContact
 
@@ -120,23 +117,6 @@ fun ButtonEditContact(
                 showDialog = false
                 onContactUpdated()
             }
-        )
-    }
-}
-@Composable
-fun ContactPicture(contact: Contact?) {
-    val picture = contact?.pictureurl
-    if (picture.isNullOrBlank() || picture == "default") {
-        Image(
-            painter = painterResource(id = R.drawable.default_picture),
-            contentDescription = "Default profile picture",
-            modifier = Modifier.size(72.dp)
-        )
-    } else {
-        Image(
-            painter = painterResource(id = R.drawable.default_picture),
-            contentDescription = "Profile picture placeholder",
-            modifier = Modifier.size(72.dp)
         )
     }
 }
