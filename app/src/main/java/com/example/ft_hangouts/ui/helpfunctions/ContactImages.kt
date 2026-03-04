@@ -21,6 +21,7 @@ import com.example.ft_hangouts.db.Contact
 
 @Composable
 fun GalleryImagePickerField(
+    launcher: ActivityResultLauncher<String>,
     pictureUrl: String,
     onPictureUrlChanged: (String?) -> Unit
 ) {
@@ -32,7 +33,7 @@ fun GalleryImagePickerField(
         }
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Button(onClick = {}) {
+        Button(onClick = {launcher.launch ("image/*")}) {
             Text("Choose picture")
         }
         bitmap?.let { bmp ->

@@ -98,6 +98,7 @@ fun ContactFormDialog(
                 )
 
                 GalleryImagePickerField(
+                    launcher = imageLauncher,
                     pictureUrl = pictureUrl,
                     onPictureUrlChanged = { newUrl: String? -> pictureUrl = newUrl ?: "" }
                 )
