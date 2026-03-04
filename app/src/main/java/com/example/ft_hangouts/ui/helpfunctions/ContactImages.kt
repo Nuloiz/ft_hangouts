@@ -21,29 +21,26 @@ import com.example.ft_hangouts.R
 import com.example.ft_hangouts.db.Contact
 
 @Composable
-fun GalleryImagePickerField(initialUriString: String?, onImageChanged: (String?) -> Unit)
-{
+fun GalleryImagePickerField(
+    pictureUrl: String,
+    onPictureUrlChanged: (String?) -> Unit
+) {
     val context = LocalContext.current
     val resolver = context.contentResolver
-    var selectedUri by remember {
+    var selectedUri by remember(pictureUrl) {
         mutableStateOf(
-            initialUriString?.let {
-                try { Uri.parse(it) } catch (_: Exception) { null }
-            }
+            pictureUrl.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
         )
     }
-    var bitmap by remember(selectedUri) { mutableStateOf<Bitmap?>(null) } //bitmap sind die pixeldaten eines fotos
+    var bitmap by remember(selectedUri) { mutableStateOf<Bitmap?>(null) }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         selectedUri = uri
-        onImageChanged(uri?.toString())
+        onPictureUrlChanged(uri?.toString())  // ← direkt an Dialog zurückgeben
     }
     LaunchedEffect(selectedUri) {
-        bitmap = null //foto löschen
-        if (selectedUri != null) {
-            bitmap = loadBitmapFromUri(resolver, selectedUri!!)
-        }
+        bitmap = selectedUri?.let { loadBitmapFromUri(resolver, it) }
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(onClick = { launcher.launch("image/*") }) {

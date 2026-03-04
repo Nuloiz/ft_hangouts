@@ -90,10 +90,8 @@ fun ContactFormDialog(
                 )
 
                 GalleryImagePickerField(
-                    initialUriString = initialContact?.pictureurl
-                ) { newUriString ->
-                    pictureUrl = newUriString ?: ""
-                }
+                    pictureUrl = pictureUrl
+                ) { newPictureUrl -> pictureUrl = newPictureUrl ?: "" }
             }
         },
         confirmButton = {
