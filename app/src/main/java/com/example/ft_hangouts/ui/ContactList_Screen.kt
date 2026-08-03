@@ -24,9 +24,7 @@ fun ContactListScreen(
     onNavigateToContact: (Contact) -> Unit)
 {
     var contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
-    fun reloadScreen() {
-        contacts = contactDao.getAllContacts()
-    }
+    fun reloadScreen() {contacts = contactDao.getAllContacts()}
     Column(
         modifier = modifier
             .fillMaxSize()

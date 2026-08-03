@@ -23,6 +23,8 @@ fun ContactScreen(
     onNavigateToContactList: () -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
+    //var contact by remember { mutableStateOf(contactDao.getContactById(contact?.id)) }
+    //fun reloadScreen() {contact = contactDao.getContactById(contact?.id)}
     val context = LocalContext.current
     var showMessage by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(showMessage) {
@@ -68,7 +70,7 @@ fun ContactScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onNavigateToSettings) { Text("to Settings") }
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonEditContact(contact = contact, contactDao = contactDao, onContactUpdated = {})
+        ButtonEditContact(contact = contact, contactDao = contactDao, onContactUpdated = {/*reloadScreen()*/})
         Spacer(modifier = Modifier.height(16.dp))
         ButtonDeleteContact(contact = contact, contactDao = contactDao, onResult = { success -> showMessage = if (success) "success" else "failed" })
         Spacer(modifier = Modifier.height(16.dp))
