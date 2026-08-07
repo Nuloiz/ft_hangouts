@@ -21,6 +21,7 @@ fun ContactScreen(
     contact: Contact?,
     contactDao: ContactDao,
     onNavigateToContactList: () -> Unit,
+    onNavigateToChat: (Contact) -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
     //var contact by remember { mutableStateOf(contactDao.getContactById(contact?.id)) }
@@ -73,6 +74,8 @@ fun ContactScreen(
         ButtonEditContact(contact = contact, contactDao = contactDao, onContactUpdated = {/*reloadScreen()*/})
         Spacer(modifier = Modifier.height(16.dp))
         ButtonDeleteContact(contact = contact, contactDao = contactDao, onResult = { success -> showMessage = if (success) "success" else "failed" })
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { onNavigateToChat(contact) }) { Text("Chat öffnen") } //das doppelte Ausrufezeichen überprüfen
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
