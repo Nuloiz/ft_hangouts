@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.MessageDao
+import com.example.ft_hangouts.ui.helpfunctions.*
 
 //Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> AktualisierenChat, -> SendMessage
 //Schreibfeld -> WriteMessage
@@ -31,9 +32,9 @@ fun ChatScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
-        ButtonContactListtoMain(onNavigateToMain = onNavigateToMain)
+        ButtontoMain(onNavigateToMain = onNavigateToMain)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonContactListtoSettings(onNavigateToSettings = onNavigateToSettings)
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

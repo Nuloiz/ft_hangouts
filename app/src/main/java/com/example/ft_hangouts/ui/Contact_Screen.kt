@@ -13,6 +13,7 @@ import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
 import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
+import com.example.ft_hangouts.ui.helpfunctions.*
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> editContact, -> deleteContact
 
@@ -69,7 +70,7 @@ fun ContactScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onNavigateToContactList) { Text("Zurück zur Liste") }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onNavigateToSettings) { Text("to Settings") }
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings)
         Spacer(modifier = Modifier.height(16.dp))
         ButtonEditContact(contact = contact, contactDao = contactDao, onContactUpdated = {/*reloadScreen()*/})
         Spacer(modifier = Modifier.height(16.dp))

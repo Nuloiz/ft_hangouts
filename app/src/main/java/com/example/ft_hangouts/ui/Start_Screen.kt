@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.db.ContactDao
+import com.example.ft_hangouts.ui.helpfunctions.*
 
 //Buttons: -> MainScreen, -> ContactListScreen, -> Settingsscreen
 
@@ -39,32 +40,12 @@ fun StartScreen(
         Spacer(modifier = Modifier.height(16.dp))
         TestButtonContactList(contactDao = contactDao)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonStarttoMain(onNavigateToMain = onNavigateToMain)
+        ButtontoMain(onNavigateToMain = onNavigateToMain)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonStarttoContactList(onNavigateToContactList = onNavigateToContactList)
+        ButtontoContactList(onNavigateToContactList = onNavigateToContactList)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonStarttoSettings(onNavigateToSettings = onNavigateToSettings)
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
-@Composable
-fun ButtonStarttoMain(onNavigateToMain: () -> Unit) {
-    Button(onClick = onNavigateToMain) {
-        Text("To Main Screen")
-    }
-}
-
-@Composable
-fun ButtonStarttoContactList(onNavigateToContactList: () -> Unit) {
-    Button(onClick = onNavigateToContactList) {
-        Text("To Contact List Screen")
-    }
-}
-
-@Composable
-fun ButtonStarttoSettings(onNavigateToSettings: () -> Unit) {
-    Button(onClick = onNavigateToSettings) {
-        Text("To Settings Screen")
-    }
-}

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
+import com.example.ft_hangouts.ui.helpfunctions.*
 
 //Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> CreateContact
 
@@ -35,9 +36,9 @@ fun ContactListScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
-        ButtonContactListtoMain(onNavigateToMain = onNavigateToMain)
+        ButtontoMain(onNavigateToMain = onNavigateToMain)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonContactListtoSettings(onNavigateToSettings = onNavigateToSettings)
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings)
         Spacer(modifier = Modifier.height(24.dp))
         ButtonCreateContact(contactDao = contactDao, onContactCreated = {reloadScreen()})
         Spacer(modifier = Modifier.height(24.dp))
@@ -95,20 +96,6 @@ fun ContactListItem(
                 )
             }
         }
-    }
-}
-
-
-@Composable
-fun ButtonContactListtoMain(onNavigateToMain: () -> Unit) {
-    Button(onClick = onNavigateToMain) {
-        Text("To Main Screen")
-    }
-}
-@Composable
-fun ButtonContactListtoSettings(onNavigateToSettings: () -> Unit) {
-    Button(onClick = onNavigateToSettings) {
-        Text("To Settings Screen")
     }
 }
 

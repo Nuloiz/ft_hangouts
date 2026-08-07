@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.db.ContactDao
+import com.example.ft_hangouts.ui.helpfunctions.*
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> NewChat (-> ExistingUser, -> NewUser), -> AktualisierenMain
 
@@ -26,23 +27,9 @@ fun MainScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
-        ButtonMaintoSettings(onNavigateToSettings = onNavigateToSettings)
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonMaintoContactList(onNavigateToContactList = onNavigateToContactList)
+        ButtontoContactList(onNavigateToContactList = onNavigateToContactList)
         Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@Composable
-fun ButtonMaintoSettings(onNavigateToSettings: () -> Unit) {
-    Button(onClick = onNavigateToSettings) {
-        Text("To Settings Screen")
-    }
-}
-
-@Composable
-fun ButtonMaintoContactList(onNavigateToContactList: () -> Unit) {
-    Button(onClick = onNavigateToContactList) {
-        Text("To Contact List Screen")
     }
 }
