@@ -31,5 +31,9 @@ fun ChatScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
+        ButtonContactListtoMain(onNavigateToMain = onNavigateToMain)
+        Spacer(modifier = Modifier.height(16.dp))
+        ButtonContactListtoSettings(onNavigateToSettings = onNavigateToSettings)
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
