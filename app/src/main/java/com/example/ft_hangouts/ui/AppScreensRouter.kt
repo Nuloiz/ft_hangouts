@@ -9,7 +9,8 @@ import com.example.ft_hangouts.ui.AppScreens.*
 fun AppScreenRouter(
     currentScreen: AppScreens,
     onNavigate: (AppScreens) -> Unit,
-    contactDao: ContactDao)
+    contactDao: ContactDao,
+    messageDao: MessageDao)
 {
     when (currentScreen)
     {

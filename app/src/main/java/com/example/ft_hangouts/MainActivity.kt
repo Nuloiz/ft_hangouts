@@ -16,6 +16,7 @@ import com.example.ft_hangouts.ui.AppScreens.*
 import com.example.ft_hangouts.ui.AppScreens
 import com.example.ft_hangouts.ui.AppScreenRouter
 import com.example.ft_hangouts.db.ContactDao
+import com.example.ft_hangouts.db.MessageDao
 import com.example.ft_hangouts.ui.theme.Ft_hangoutsTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,13 +24,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val contactDao = ContactDao(this)
+        val messageDao = MessageDao(this)
         setContent {
             Ft_hangoutsTheme {
                 var currentScreen by remember { mutableStateOf<AppScreens>(Start) }
                 AppScreenRouter(
                     currentScreen = currentScreen,
                     onNavigate = { newScreen: AppScreens -> currentScreen = newScreen },
-                    contactDao = contactDao
+                    contactDao = contactDao,
+                    messageDao = messageDao
                 )
             }
         }

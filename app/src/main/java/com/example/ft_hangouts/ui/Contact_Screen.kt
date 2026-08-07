@@ -75,7 +75,7 @@ fun ContactScreen(
         Spacer(modifier = Modifier.height(16.dp))
         ButtonDeleteContact(contact = contact, contactDao = contactDao, onResult = { success -> showMessage = if (success) "success" else "failed" })
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { onNavigateToChat(contact) }) { Text("Chat öffnen") } //das doppelte Ausrufezeichen überprüfen
+        Button(onClick = { onNavigateToChat(contact!!) }) { Text("Chat öffnen") } //das doppelte Ausrufezeichen überprüfen
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
