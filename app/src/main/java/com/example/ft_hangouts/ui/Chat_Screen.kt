@@ -2,6 +2,7 @@ package com.example.ft_hangouts.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,25 +45,26 @@ fun ChatScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .clickable {onNavigateToContact()} //!! Not yet Working!!!
+            .padding(vertical = 4.dp)
     ) {
         Text(
             text = contact.name,
-            style = MaterialTheme.typography.headlineLarge
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.primary
         )
         Text(
             text = contact.phoneNumber,
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.headlineSmall,
             color = Color.Gray
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ButtontoMain(onNavigateToMain = onNavigateToMain, "Main Screen")
             ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
-            Button(onClick = onNavigateToContact) { Text("Profile") }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
@@ -121,6 +123,7 @@ fun ChatScreen(
                 Text("Send Message")
             }
         }
+        Spacer(modifier = Modifier.height(44.dp))
     }
 }
 @Composable
