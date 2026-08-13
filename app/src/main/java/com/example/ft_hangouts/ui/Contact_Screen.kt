@@ -68,9 +68,9 @@ fun ContactScreen(
             Text("Error: Contact not found")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onNavigateToContactList) { Text("Zurück zur Liste") }
+        ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "zurück zur Contact List")
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoSettings(onNavigateToSettings = onNavigateToSettings)
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
         Spacer(modifier = Modifier.height(16.dp))
         ButtonEditContact(contact = contact, contactDao = contactDao, onContactUpdated = {/*reloadScreen()*/})
         Spacer(modifier = Modifier.height(16.dp))

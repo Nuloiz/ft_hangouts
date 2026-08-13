@@ -27,9 +27,9 @@ fun MainScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
-        ButtontoSettings(onNavigateToSettings = onNavigateToSettings)
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoContactList(onNavigateToContactList = onNavigateToContactList)
+        ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "Contacts")
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

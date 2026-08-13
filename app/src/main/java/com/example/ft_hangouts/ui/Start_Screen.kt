@@ -40,11 +40,11 @@ fun StartScreen(
         Spacer(modifier = Modifier.height(16.dp))
         TestButtonContactList(contactDao = contactDao)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoMain(onNavigateToMain = onNavigateToMain)
+        ButtontoMain(onNavigateToMain = onNavigateToMain, "To Main Screen")
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoContactList(onNavigateToContactList = onNavigateToContactList)
+        ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "Contacts")
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoSettings(onNavigateToSettings = onNavigateToSettings)
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
         Spacer(modifier = Modifier.height(16.dp))
     }
 }

@@ -4,21 +4,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 
 @Composable
-fun ButtontoMain(onNavigateToMain: () -> Unit) {
+fun ButtontoMain(onNavigateToMain: () -> Unit, message: String = "To Main Screen") {
     Button(onClick = onNavigateToMain) {
-        Text("To Main Screen")
+        Text(message)
     }
 }
 @Composable
-fun ButtontoSettings(onNavigateToSettings: () -> Unit) {
+fun ButtontoSettings(onNavigateToSettings: () -> Unit, message: String = "To Settings Screen") {
     Button(onClick = onNavigateToSettings) {
-        Text("To Settings Screen")
+        Text(message)
     }
 }
 
 @Composable
-fun ButtontoContactList(onNavigateToContactList: () -> Unit) {
+fun ButtontoContactList(onNavigateToContactList: () -> Unit, message: String = "To Contact List Screen") {
     Button(onClick = onNavigateToContactList) {
-        Text("To Contact List Screen")
+        Text(message)
     }
 }
