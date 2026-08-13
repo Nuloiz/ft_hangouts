@@ -6,7 +6,7 @@ import android.content.Context
 class MessageDao(context: Context)
 {
     private val dbHelper = DatabaseHelper(context)
-    fun getMessagesForContact(contactId: Long): List<Message>
+    fun getMessagesofContact(contactId: Long): List<Message>
     {
         val db = dbHelper.readableDatabase
         val messages = mutableListOf<Message>()
@@ -40,7 +40,40 @@ class MessageDao(context: Context)
         return messages
     }
 
-    fun insertMessage(message: Message): Long
+    fun getlatestMessageofContact(contactId: Long): Message?
+    {
+        val db = dbHelper.readableDatabase
+        var latestMessage: Message? = null
+        val cursor = db.query(
+            DatabaseHelper.TABLE_MESSAGES,
+            null,
+            "${DatabaseHelper.COLUMN_MESSAGE_CONTACT_ID} = ?",
+            arrayOf(contactId.toString()),
+            null,
+            null,
+            "${DatabaseHelper.COLUMN_MESSAGE_TIMESTAMP} DESC",
+            "1"
+        )
+        cursor.use {
+            if (it.moveToNext()) {
+                val id = it.getLong(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_MESSAGE_ID))
+                val body = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_MESSAGE_BODY))
+                val timestamp = it.getLong(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_MESSAGE_TIMESTAMP))
+                val direction = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_MESSAGE_DIRECTION))
+
+                latestMessage = Message(
+                    id = id,
+                    contactId = contactId,
+                    body = body,
+                    timestamp = timestamp,
+                    direction = direction
+                )
+            }
+        }
+        return latestMessage
+    }
+
+    fun insMessage(message: Message): Long
     {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
@@ -49,10 +82,11 @@ class MessageDao(context: Context)
             put(DatabaseHelper.COLUMN_MESSAGE_TIMESTAMP, message.timestamp)
             put(DatabaseHelper.COLUMN_MESSAGE_DIRECTION, message.direction)
         }
-        return db.insert(DatabaseHelper.TABLE_MESSAGES, null, values)
+        val id = db.insert(DatabaseHelper.TABLE_MESSAGES, null, values)
+        return id
     }
 
-    fun deleteMessagesForContact(contactId: Long): Int
+    fun delMessagefContact(contactId: Long): Int
     {
         val db = dbHelper.writableDatabase
         return db.delete(
