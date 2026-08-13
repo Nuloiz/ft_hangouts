@@ -1,13 +1,25 @@
 package com.example.ft_hangouts.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
+import com.example.ft_hangouts.db.Message
 import com.example.ft_hangouts.db.MessageDao
+import com.example.ft_hangouts.db.MessageDirection
 import com.example.ft_hangouts.ui.helpfunctions.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 //Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> AktualisierenChat, -> SendMessage
 //Schreibfeld -> WriteMessage
@@ -15,26 +27,128 @@ import com.example.ft_hangouts.ui.helpfunctions.*
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
-    contact: com.example.ft_hangouts.db.Contact,
+    contact: Contact,
     contactDao: ContactDao,
     messageDao: MessageDao,
     onNavigateToMain: () -> Unit,
     onNavigateToContact: () -> Unit,
-    onNavigateToSettings: () -> Unit)
-{
+    onNavigateToSettings: () -> Unit) {
+    var messageText by remember { mutableStateOf("") }
+    var messagesList by remember {
+        mutableStateOf(messageDao.getMessagesofContact(contact.id))
+    }
+
+    fun refreshChat() {
+        messagesList = messageDao.getMessagesofContact(contact.id)
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
         Text(
-            text = "Chat Screen",
+            text = contact.name,
             style = MaterialTheme.typography.headlineLarge
         )
-        Spacer(modifier = Modifier.height(24.dp))
-        ButtontoMain(onNavigateToMain = onNavigateToMain, "Main Screen")
+        Text(
+            text = contact.phoneNumber,
+            style = MaterialTheme.typography.headlineLarge,
+            color = Color.Gray
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            ButtontoMain(onNavigateToMain = onNavigateToMain, "Main Screen")
+            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+            Button(onClick = onNavigateToContact) { Text("Profile") }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(onClick = { refreshChat() }) { Text("Chat Aktualisieren") }
+            Button( //Nur zum Testen einen Delete chat Button, soll später zu Settings oder Contact
+                onClick = {
+                    messageDao.delMessagesofContact(contact.id)
+                    refreshChat()
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) { Text("Chat Löschen (Test)") }
+        }
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            reverseLayout = false //Puts newest message down
+        ) {
+            items(messagesList) { message ->
+                MessageBubble(message = message)
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
-        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                value = messageText,
+                onValueChange = { messageText = it },
+                placeholder = { Text("Type to Write") },
+                modifier = Modifier.weight(1f)
+            )
+            Button(
+                onClick = {
+                    if (messageText.isNotBlank()) {
+                        val newMessage = Message(
+                            contactId = contact.id,
+                            body = messageText,
+                            timestamp = System.currentTimeMillis(),
+                            direction = MessageDirection.SENT
+                        )
+                        messageDao.insMessage(newMessage)
+                        messageText = ""
+                        refreshChat()
+
+                        // TODO: Später hier echte SMS über Android Telephony Manager absenden
+                    }
+                }
+            ) {
+                Text("Send Message")
+            }
+        }
+    }
+}
+@Composable
+fun MessageBubble(message: Message) {
+    val isSent = message.direction == MessageDirection.SENT
+    val alignment = if (isSent) Alignment.CenterEnd else Alignment.CenterStart
+    val bubbleColor = if (isSent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        contentAlignment = alignment
+    ) {
+        Column(
+            modifier = Modifier
+                .background(bubbleColor, shape = RoundedCornerShape(12.dp))
+                .padding(12.dp)
+        ) {
+            Text(
+                text = message.body,
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                text = SimpleDateFormat("HH:mm - dd.MM", Locale.getDefault()).format(Date(message.timestamp)),
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray,
+                modifier = Modifier.align(Alignment.End)
+            )
+        }
     }
 }

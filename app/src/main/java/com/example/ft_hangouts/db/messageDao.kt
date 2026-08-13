@@ -86,7 +86,7 @@ class MessageDao(context: Context)
         return id
     }
 
-    fun delMessagefContact(contactId: Long): Int
+    fun delMessagesofContact(contactId: Long): Int
     {
         val db = dbHelper.writableDatabase
         return db.delete(
