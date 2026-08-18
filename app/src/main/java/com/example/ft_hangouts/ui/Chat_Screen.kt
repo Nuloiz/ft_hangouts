@@ -1,6 +1,6 @@
 package com.example.ft_hangouts.ui
 
-import androidx.compose.foundation.layout.*
+import  androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import android.telephony.SmsManager
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Message
@@ -34,11 +36,9 @@ fun ChatScreen(
     onNavigateToMain: () -> Unit,
     onNavigateToContact: (Contact) ->Unit,
     onNavigateToSettings: () -> Unit) {
-    var messageText by remember { mutableStateOf("") }
     var messagesList by remember {
         mutableStateOf(messageDao.getMessagesofContact(contact.id))
     }
-
     fun refreshChat() {
         messagesList = messageDao.getMessagesofContact(contact.id)
     }
@@ -48,38 +48,7 @@ fun ChatScreen(
             .statusBarsPadding()
             .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .clickable { onNavigateToContact(contact) }
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier.size(64.dp)
-            ) {
-                ContactPicture(contact = contact)
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToContact(contact) }
-                    .padding(bottom = 8.dp)
-            ) {
-                Text(
-                    text = contact.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = contact.phoneNumber,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color.Gray
-                )
-            }
-        }
+        ChatHeader(contact = contact, onNavigateToContact = onNavigateToContact)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -93,59 +62,65 @@ fun ChatScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(onClick = { refreshChat() }) { Text("Chat Aktualisieren") }
+            Button(onClick = { refreshChat() }) { Text("reload Chat") }
             Button( //Nur zum Testen einen Delete chat Button, soll später zu Settings oder Contact
                 onClick = {
                     messageDao.delMessagesofContact(contact.id)
                     refreshChat()
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-            ) { Text("Chat Löschen (Test)") }
+            ) { Text("delete Chat (Test)") }
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth(),
-            reverseLayout = false //Puts newest message down
+                .fillMaxWidth()
         ) {
             items(messagesList) { message ->
                 MessageBubble(message = message)
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedTextField(
-                value = messageText,
-                onValueChange = { messageText = it },
-                placeholder = { Text("Type to Write") },
-                modifier = Modifier.weight(1f)
-            )
-            Button(
-                onClick = {
-                    if (messageText.isNotBlank()) {
-                        val newMessage = Message(
-                            contactId = contact.id,
-                            body = messageText,
-                            timestamp = System.currentTimeMillis(),
-                            direction = MessageDirection.SENT
-                        )
-                        messageDao.insMessage(newMessage)
-                        messageText = ""
-                        refreshChat()
-
-                        // TODO: Später hier echte SMS über Android Telephony Manager absenden
-                    }
-                }
-            ) {
-                Text("Send Message")
-            }
-        }
+        MessageInputBar(contact = contact, messageDao = messageDao, onMessageSent = { refreshChat() })
         Spacer(modifier = Modifier.height(44.dp))
+    }
+}
+@Composable
+fun ChatHeader(
+    contact: Contact,
+    onNavigateToContact: (Contact) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable { onNavigateToContact(contact) }
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier.size(64.dp)
+        ) {
+            ContactPicture(contact = contact)
+        }
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                text = "Chat with ${contact.name}",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = contact.phoneNumber,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+        }
     }
 }
 @Composable
@@ -174,6 +149,59 @@ fun MessageBubble(message: Message) {
                 color = Color.Gray,
                 modifier = Modifier.align(Alignment.End)
             )
+        }
+    }
+}
+
+@Composable
+fun MessageInputBar(
+    contact: Contact,
+    messageDao: MessageDao,
+    onMessageSent: () -> Unit
+) {
+    var messageText by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        OutlinedTextField(
+            value = messageText,
+            onValueChange = { messageText = it },
+            placeholder = { Text("Type message...") },
+            modifier = Modifier.weight(1f)
+        )
+        Button(
+            onClick = {
+                if (messageText.isNotBlank()) {
+                    try {
+                        val smsManager: SmsManager = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+                            context.getSystemService(SmsManager::class.java) ?: SmsManager.getDefault()
+                        } else {
+                            @Suppress("DEPRECATION")
+                            SmsManager.getDefault()
+                        }
+                        smsManager.sendTextMessage(contact.phoneNumber, null, messageText, null, null)
+
+                        val newMessage = Message(
+                            contactId = contact.id,
+                            body = messageText,
+                            timestamp = System.currentTimeMillis(),
+                            direction = MessageDirection.SENT
+                        )
+                        messageDao.insMessage(newMessage)
+                        messageText = ""
+                        onMessageSent()
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        ) {
+            Text("Send")
         }
     }
 }
