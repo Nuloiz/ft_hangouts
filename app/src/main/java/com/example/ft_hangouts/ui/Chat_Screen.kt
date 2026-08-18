@@ -46,24 +46,39 @@ fun ChatScreen(
         modifier = modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .padding(vertical = 16.dp)
+            .padding(16.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .wrapContentHeight()
                 .clickable { onNavigateToContact(contact) }
-                .padding(bottom = 8.dp)
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = contact.name,
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = contact.phoneNumber,
-                style = MaterialTheme.typography.headlineSmall,
-                color = Color.Gray
-            )
+            Box(
+                modifier = Modifier.size(64.dp)
+            ) {
+                ContactPicture(contact = contact)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onNavigateToContact(contact) }
+                    .padding(bottom = 8.dp)
+            ) {
+                Text(
+                    text = contact.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = contact.phoneNumber,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.Gray
+                )
+            }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
