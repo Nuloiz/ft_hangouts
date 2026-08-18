@@ -32,7 +32,7 @@ fun ChatScreen(
     contactDao: ContactDao,
     messageDao: MessageDao,
     onNavigateToMain: () -> Unit,
-    onNavigateToContact: () -> Unit,
+    onNavigateToContact: (Contact) ->Unit,
     onNavigateToSettings: () -> Unit) {
     var messageText by remember { mutableStateOf("") }
     var messagesList by remember {
@@ -45,19 +45,26 @@ fun ChatScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .clickable {onNavigateToContact()} //!! Not yet Working!!!
-            .padding(vertical = 4.dp)
+            .statusBarsPadding()
+            .padding(vertical = 16.dp)
     ) {
-        Text(
-            text = contact.name,
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = contact.phoneNumber,
-            style = MaterialTheme.typography.headlineSmall,
-            color = Color.Gray
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onNavigateToContact(contact) }
+                .padding(bottom = 8.dp)
+        ) {
+            Text(
+                text = contact.name,
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = contact.phoneNumber,
+                style = MaterialTheme.typography.headlineSmall,
+                color = Color.Gray
+            )
+        }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
