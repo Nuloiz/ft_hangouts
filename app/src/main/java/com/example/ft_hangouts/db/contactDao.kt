@@ -80,6 +80,42 @@ class ContactDao(context: Context)
         return null
     }
 
+    fun getContactByPhone(phoneNumber: String): Contact?
+    {
+        val db = dbHelper.readableDatabase
+        val cursor = db.query(
+            DatabaseHelper.TABLE_CONTACTS,
+            null,
+            "${DatabaseHelper.COLUMN_CONTACT_PHONE} = ?",
+            arrayOf(phoneNumber),
+            null,
+            null,
+            null
+        )
+        cursor.use {
+            if (it.moveToFirst()) {
+                val id = it.getLong(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_ID))
+                val name = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_NAME))
+                val phone = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_PHONE))
+                val email = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_EMAIL))
+                val address = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_ADDRESS))
+                val note = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_NOTE))
+                val pictureurl = it.getString(it.getColumnIndexOrThrow(DatabaseHelper.COLUMN_CONTACT_PICTUREURL))
+
+                return Contact(
+                    id = id,
+                    name = name,
+                    phoneNumber = phone,
+                    email = email,
+                    address = address,
+                    note = note,
+                    pictureurl = pictureurl
+                )
+            }
+        }
+        return null
+    }
+
     fun insertContact(contact: Contact): Long
     {
         val db = dbHelper.writableDatabase
