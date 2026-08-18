@@ -37,7 +37,7 @@ fun ContactListScreen(
         )
         Spacer(modifier = Modifier.height(24.dp))
         ButtontoMain(onNavigateToMain = onNavigateToMain, "To Main Screen")
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
         Spacer(modifier = Modifier.height(24.dp))
         ButtonCreateContact(contactDao = contactDao, onContactCreated = {reloadScreen()})
