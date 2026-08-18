@@ -36,5 +36,15 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+        if (checkSelfPermission(android.Manifest.permission.RECEIVE_SMS) != android.content.pm.PackageManager.PERMISSION_GRANTED ||
+            checkSelfPermission(android.Manifest.permission.SEND_SMS) != android.content.pm.PackageManager.PERMISSION_GRANTED) { //Force Permission Request
+            requestPermissions(
+                arrayOf(
+                    android.Manifest.permission.RECEIVE_SMS,
+                    android.Manifest.permission.SEND_SMS,
+                    android.Manifest.permission.READ_SMS
+                ), 101
+            )
+        }
     }
 }
