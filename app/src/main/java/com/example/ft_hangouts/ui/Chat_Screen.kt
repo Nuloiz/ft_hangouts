@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
@@ -37,10 +39,13 @@ fun ChatScreen(
     onNavigateToContact: (Contact) ->Unit,
     onNavigateToSettings: () -> Unit) {
     var messagesList by remember {
-        mutableStateOf(messageDao.getMessagesofContact(contact.id))
-    }
+        mutableStateOf(messageDao.getMessagesofContact(contact.id))}
     fun refreshChat() {
-        messagesList = messageDao.getMessagesofContact(contact.id)
+        messagesList = messageDao.getMessagesofContact(contact.id) }
+    val listState = rememberLazyListState()
+    LaunchedEffect(messagesList.size) {
+        if (messagesList.isNotEmpty()) {
+            listState.animateScrollToItem(messagesList.size - 1) }
     }
     Column(
         modifier = modifier
@@ -73,13 +78,13 @@ fun ChatScreen(
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ) {
             items(messagesList) { message ->
-                MessageBubble(message = message)
-            }
+                MessageBubble(message = message) }
         }
         Spacer(modifier = Modifier.height(16.dp))
         MessageInputBar(contact = contact, messageDao = messageDao, onMessageSent = { refreshChat() })
