@@ -29,7 +29,7 @@ class SmsReceiver : BroadcastReceiver() {
                     val newMessage = Message(
                         contactId = contact.id,
                         body = body,
-                        timestamp = sms.timestampMillis,
+                        timestamp = System.currentTimeMillis(),
                         direction = MessageDirection.RECEIVED
                     )
                     messageDao.insMessage(newMessage)
