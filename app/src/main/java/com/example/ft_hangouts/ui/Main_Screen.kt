@@ -10,24 +10,47 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
+import com.example.ft_hangouts.db.Message
+import com.example.ft_hangouts.db.MessageDao
 import com.example.ft_hangouts.ui.helpfunctions.*
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> NewChat (-> ExistingUser, -> NewUser), -> AktualisierenMain
 
+data class MainChatItem(
+    val contact : Contact,
+    val latmessage : Message?
+)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
+    messageDao: MessageDao,
     onNavigateToSettings: () -> Unit,
     onNavigateToContactList: () -> Unit,
     onNavigateToChat: (Contact) -> Unit
 ) {
-    var contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
-    fun reloadScreen() {contacts = contactDao.getAllContacts()}
+    fun loadChatItems(): List<MainChatItem> {
+        return contactDao.getAllContacts().map { contact ->
+            MainChatItem(
+                contact = contact,
+                latmessage = messageDao.getlatestMessageofContact(contact.id)
+            )
+        }.sortedByDescending { chatItem ->
+            chatItem.latmessage?.timestamp ?: 0L
+        }
+    }
+    var chatItems by remember { mutableStateOf(loadChatItems()) }
+    fun reloadScreen() {chatItems = loadChatItems() }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -38,26 +61,34 @@ fun MainScreen(
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(24.dp))
-        ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+            Spacer(modifier = Modifier.height(16.dp))
+            ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "Contacts")
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { reloadScreen() }) { Text("Aktualisieren") }
+        }
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "Contacts")
-        Spacer(modifier = Modifier.height(16.dp))
-        ChatList(contacts = contacts, onContactClick = onNavigateToChat)
+        ChatList(chatItems = chatItems, onContactClick = onNavigateToChat)
     }
 }
 
 @Composable
 fun ChatList(
     modifier: Modifier = Modifier,
-    contacts: List<Contact>,
+    chatItems: List<MainChatItem>,
     onContactClick: (Contact) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(contacts) { contact ->
-            ChatListItem(contact = contact, onClick = { onContactClick(contact) }
+        items(chatItems) { item ->
+            ChatListItem(
+                item = item,
+                onClick = { onContactClick(item.contact) }
             )
         }
     }
@@ -65,7 +96,7 @@ fun ChatList(
 
 @Composable
 fun ChatListItem(
-    contact: Contact,
+    item: MainChatItem,
     onClick: () -> Unit
 ) {
     Card(
@@ -78,23 +109,33 @@ fun ChatListItem(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            Text(
-                text = contact.name,
-                style = MaterialTheme.typography.headlineSmall
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = item.contact.name,
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                item.latmessage?.let { msg ->
+                    val dateStr = SimpleDateFormat("HH:mm - dd.MM.", Locale.getDefault())
+                        .format(Date(msg.timestamp))
+                    Text(
+                        text = dateStr,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = contact.phoneNumber,
-                style = MaterialTheme.typography.bodyMedium
+                text = item.latmessage?.body ?: "Empty Chat",
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (item.latmessage != null) Color.Unspecified else Color.Gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-            if (!contact.email.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = contact.email!!,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
         }
     }
 }
