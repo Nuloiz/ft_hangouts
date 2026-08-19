@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,7 +38,7 @@ fun MainScreen(
     messageDao: MessageDao,
     onNavigateToSettings: () -> Unit,
     onNavigateToContactList: () -> Unit,
-    onNavigateToChat: (Contact) -> Unit
+    onNavigateToChat: (Contact) -> Unit,
 ) {
     fun loadChatItems(): List<MainChatItem> {
         return contactDao.getAllContacts().map { contact ->
@@ -71,7 +72,14 @@ fun MainScreen(
             Button(onClick = { reloadScreen() }) { Text("Aktualisieren") }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        ChatList(chatItems = chatItems, onContactClick = onNavigateToChat)
+        ChatList(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            chatItems = chatItems,
+            onContactClick = onNavigateToChat
+        )
+        NewChatButton(contactDao = contactDao, onNavigateToContactList = onNavigateToContactList, onContactCreated = { reloadScreen() })
     }
 }
 
@@ -137,5 +145,57 @@ fun ChatListItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
+    }
+}
+
+@Composable
+fun NewChatButton(
+    modifier: Modifier = Modifier,
+    contactDao: ContactDao,
+    onNavigateToContactList: () -> Unit,
+    onContactCreated: () -> Unit
+) {
+    var showSelectionDialog by remember { mutableStateOf(false) }
+    var showCreateContactDialog by remember { mutableStateOf(false) }
+    Button(
+        onClick = { showSelectionDialog = true },
+        modifier = modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(vertical = 8.dp)
+    ) { Text("New Chat") }
+    if (showSelectionDialog) {
+        AlertDialog(
+            onDismissRequest = { showSelectionDialog = false },
+            title = { Text("Start New Chat") },
+            text = { Text("New or Existing Contact") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showSelectionDialog = false
+                        onNavigateToContactList()
+                    }
+                ) { Text("Choose Contact") }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showSelectionDialog = false
+                        showCreateContactDialog = true
+                    }
+                ) { Text("New Contact") }
+            }
+        )
+    }
+    if (showCreateContactDialog) {
+        ContactFormDialog(
+            isCreateMode = true,
+            onDismiss = { showCreateContactDialog = false },
+            onSave = { newContact ->
+                contactDao.insertContact(newContact)
+                showCreateContactDialog = false
+                onContactCreated()
+            }
+        )
     }
 }
