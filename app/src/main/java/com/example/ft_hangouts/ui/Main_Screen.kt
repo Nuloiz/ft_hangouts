@@ -38,7 +38,7 @@ fun MainScreen(
     messageDao: MessageDao,
     onNavigateToSettings: () -> Unit,
     onNavigateToContactList: () -> Unit,
-    onNavigateToChat: (Contact) -> Unit,
+    onNavigateToChat: (Contact) -> Unit
 ) {
     fun loadChatItems(): List<MainChatItem> {
         return contactDao.getAllContacts().map { contact ->
@@ -69,7 +69,7 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(16.dp))
             ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "Contacts")
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { reloadScreen() }) { Text("Aktualisieren") }
+            Button(onClick = { reloadScreen() }) { Text("refresh") }
         }
         Spacer(modifier = Modifier.height(16.dp))
         ChatList(
@@ -79,7 +79,7 @@ fun MainScreen(
             chatItems = chatItems,
             onContactClick = onNavigateToChat
         )
-        NewChatButton(contactDao = contactDao, onNavigateToContactList = onNavigateToContactList, onContactCreated = { reloadScreen() })
+        NewChatButton(contactDao = contactDao, onNavigateToChat = onNavigateToChat, onContactCreated = { reloadScreen() })
     }
 }
 
@@ -152,10 +152,11 @@ fun ChatListItem(
 fun NewChatButton(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
-    onNavigateToContactList: () -> Unit,
+    onNavigateToChat: (Contact) -> Unit,
     onContactCreated: () -> Unit
 ) {
     var showSelectionDialog by remember { mutableStateOf(false) }
+    var showContactPickerList by remember { mutableStateOf(false) }
     var showCreateContactDialog by remember { mutableStateOf(false) }
     Button(
         onClick = { showSelectionDialog = true },
@@ -173,7 +174,7 @@ fun NewChatButton(
                 TextButton(
                     onClick = {
                         showSelectionDialog = false
-                        onNavigateToContactList()
+                        showContactPickerList = true
                     }
                 ) { Text("Choose Contact") }
             },
@@ -187,14 +188,64 @@ fun NewChatButton(
             }
         )
     }
+    if (showContactPickerList) {
+        val contacts = remember { contactDao.getAllContacts() }
+
+        AlertDialog(
+            onDismissRequest = { showContactPickerList = false },
+            title = { Text("Choose Contact") },
+            text = {
+                if (contacts.isEmpty()) {
+                    Text("No Contacts")
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 300.dp),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(contacts) { contact ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        showContactPickerList = false
+                                        onNavigateToChat(contact)
+                                    }
+                            ) {
+                                Column(modifier = Modifier.padding(12.dp)) {
+                                    Text(
+                                        text = contact.name,
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                    Text(
+                                        text = contact.phoneNumber,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showContactPickerList = false }) {
+                    Text("Return")
+                }
+            }
+        )
+    }
     if (showCreateContactDialog) {
         ContactFormDialog(
             isCreateMode = true,
             onDismiss = { showCreateContactDialog = false },
             onSave = { newContact ->
-                contactDao.insertContact(newContact)
+                val id = contactDao.insertContact(newContact)
                 showCreateContactDialog = false
                 onContactCreated()
+                val savedContact = newContact.copy(id = id)
+                onNavigateToChat(savedContact)
             }
         )
     }
