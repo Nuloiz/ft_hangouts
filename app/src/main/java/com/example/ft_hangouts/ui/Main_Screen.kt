@@ -57,24 +57,12 @@ fun MainScreen(
     fun reloadScreen() {chatItems = loadChatItems() }
     Column(
         modifier = modifier.fillMaxSize()) {
-        AppHeader(title = "Chats", headerColor = headerColor)
+        AppHeader(title = "Main Screen", headerColor = headerColor)
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Main Screen",
-                    style = MaterialTheme.typography.headlineLarge
-                )
-                LiveClock()
-            }
-            Spacer(modifier = Modifier.height(24.dp))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -266,23 +254,4 @@ fun NewChatButton(
             }
         )
     }
-}
-
-@Composable
-fun LiveClock(modifier: Modifier = Modifier) {
-    var currentTime by remember {
-        mutableStateOf(SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date()))
-    }
-    LaunchedEffect(Unit) {
-        while (true) {
-            currentTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-            delay(1000L) // Wait 1 second
-        }
-    }
-    Text(
-        text = currentTime,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = modifier
-    )
 }
