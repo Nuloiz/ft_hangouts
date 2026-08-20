@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Message
 import com.example.ft_hangouts.db.MessageDao
 import com.example.ft_hangouts.ui.helpfunctions.*
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -55,12 +57,20 @@ fun MainScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Text(
-            text = "Main Screen",
-            style = MaterialTheme.typography.headlineLarge
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Main Screen",
+                style = MaterialTheme.typography.headlineLarge
+            )
+            LiveClock()
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -249,4 +259,23 @@ fun NewChatButton(
             }
         )
     }
+}
+
+@Composable
+fun LiveClock(modifier: Modifier = Modifier) {
+    var currentTime by remember {
+        mutableStateOf(SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date()))
+    }
+    LaunchedEffect(Unit) {
+        while (true) {
+            currentTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+            delay(1000L) // Wait 1 second
+        }
+    }
+    Text(
+        text = currentTime,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = modifier
+    )
 }
