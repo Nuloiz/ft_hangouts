@@ -92,6 +92,14 @@ Small helper components created to keep the screen files clean and reusable:
 
 **NavigationsButtons.kt**: Contains universal navigation buttons reused across multiple screens.
 
+**AppHeader.kt:** A reusable top app bar component present across screens. It applies the user-selected background color and automatically calculates appropriate text contrast (switching between white and black text based on color luminance) for optimal readability.
+
+**HeaderColorManager.kt:** Handles the color customization system. Defines the available color palette (over 10+ selectable colors) and manages saving/loading the user's color preference to Android's `SharedPreferences`, ensuring color settings persist across app restarts.
+
+**LanguageManager.kt:** Manages the app's language state (`de` / `en`). Reads and writes the active language preference to `SharedPreferences` so that the chosen language remains active upon reopening the app.
+
+**Translations.kt (Translations):** Serves as the central localization dictionary. Contains a nested key-value map for all application strings in English and German, alongside a universal translation lookup function `tr(key, lang)` that safe-fetches string values dynamically without clogging screen UI logic with conditional statements.
+
 
 🎨 **Theme (ui/theme/)**
 
