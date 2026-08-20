@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import android.telephony.SmsManager
 import com.example.ft_hangouts.db.Contact
@@ -21,9 +22,9 @@ import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Message
 import com.example.ft_hangouts.db.MessageDao
 import com.example.ft_hangouts.db.MessageDirection
+import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
-import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -37,6 +38,7 @@ fun ChatScreen(
     contact: Contact,
     contactDao: ContactDao,
     messageDao: MessageDao,
+    headerColor: Color,
     onNavigateToMain: () -> Unit,
     onNavigateToContact: (Contact) ->Unit,
     onNavigateToSettings: () -> Unit) {
@@ -49,13 +51,9 @@ fun ChatScreen(
         if (messagesList.isNotEmpty()) {
             listState.animateScrollToItem(messagesList.size - 1) }
     }
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .padding(16.dp)
+    Column(modifier = modifier.fillMaxSize()
     ) {
-        ChatHeader(contact = contact, onNavigateToContact = onNavigateToContact)
+        ChatHeader(contact = contact, headerColor = headerColor, onNavigateToContact = onNavigateToContact)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -96,36 +94,37 @@ fun ChatScreen(
 @Composable
 fun ChatHeader(
     contact: Contact,
+    headerColor: Color,
     onNavigateToContact: (Contact) -> Unit
 ) {
+    val textColor = if (headerColor.luminance() < 0.5f) Color.White else Color.Black
+    val subTextColor = if (headerColor.luminance() < 0.5f) Color.LightGray else Color.DarkGray
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .background(headerColor)
+            .statusBarsPadding()
             .clickable { onNavigateToContact(contact) }
-            .padding(vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier.size(64.dp)
         ) {
-            ContactPicture(contact = contact)
-        }
-
+            ContactPicture(contact = contact)}
         Spacer(modifier = Modifier.width(12.dp))
-
         Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
                 text = "Chat with ${contact.name}",
                 style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary
+                color = textColor
             )
             Text(
                 text = contact.phoneNumber,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
+                color = subTextColor
             )
         }
     }
