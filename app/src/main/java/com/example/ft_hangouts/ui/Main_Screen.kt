@@ -38,6 +38,7 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
     messageDao: MessageDao,
+    headerColor: Color,
     onNavigateToSettings: () -> Unit,
     onNavigateToContactList: () -> Unit,
     onNavigateToChat: (Contact) -> Unit
@@ -55,41 +56,47 @@ fun MainScreen(
     var chatItems by remember { mutableStateOf(loadChatItems()) }
     fun reloadScreen() {chatItems = loadChatItems() }
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Main Screen",
-                style = MaterialTheme.typography.headlineLarge
-            )
-            LiveClock()
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
-            Spacer(modifier = Modifier.height(16.dp))
-            ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "Contacts")
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { reloadScreen() }) { Text("refresh") }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        ChatList(
+        modifier = modifier.fillMaxSize()) {
+        AppHeader(title = "Chats", headerColor = headerColor)
+        Column(
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            chatItems = chatItems,
-            onContactClick = onNavigateToChat
-        )
-        NewChatButton(contactDao = contactDao, onNavigateToChat = onNavigateToChat, onContactCreated = { reloadScreen() })
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Main Screen",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+                LiveClock()
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+                Spacer(modifier = Modifier.height(16.dp))
+                ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "Contacts")
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(onClick = { reloadScreen() }) { Text("refresh") }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            ChatList(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                chatItems = chatItems,
+                onContactClick = onNavigateToChat
+            )
+            NewChatButton(
+                contactDao = contactDao,
+                onNavigateToChat = onNavigateToChat,
+                onContactCreated = { reloadScreen() })
+        }
     }
 }
 

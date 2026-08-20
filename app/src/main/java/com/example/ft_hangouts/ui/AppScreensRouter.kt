@@ -25,7 +25,7 @@ fun AppScreenRouter(
     when (currentScreen)
     {
         Start -> StartScreen(contactDao = contactDao, onNavigateToMain = { onNavigate(Main)}, onNavigateToContactList = { onNavigate(ContactList)}, onNavigateToSettings = { onNavigate(Settings)})
-        Main -> MainScreen(contactDao = contactDao, messageDao = messageDao, onNavigateToSettings = { onNavigate(Settings)}, onNavigateToContactList = { onNavigate(ContactList)}, onNavigateToChat = {selectedContact -> onNavigate(Chat(selectedContact))})
+        Main -> MainScreen(contactDao = contactDao, messageDao = messageDao, headerColor = headerColor, onNavigateToSettings = { onNavigate(Settings)}, onNavigateToContactList = { onNavigate(ContactList)}, onNavigateToChat = {selectedContact -> onNavigate(Chat(selectedContact))})
         Settings -> SettingsScreen(onNavigateToStart = { onNavigate(Start)}, currentHeaderColor = headerColor, onHeaderColorChanged = { newColor -> headerColor = newColor }, onNavigateToMain = { onNavigate(Main)})
         ContactList -> ContactListScreen(contactDao = contactDao, onNavigateToMain = { onNavigate(Main)}, onNavigateToSettings = { onNavigate(Settings)}, onNavigateToContact = {selectedContact -> onNavigate(Contact(selectedContact))})
         is Contact -> ContactScreen(contact = currentScreen.selectedContact, contactDao = contactDao, onNavigateToContactList = { onNavigate(ContactList) }, onNavigateToChat = {selectedContact -> onNavigate(Chat(selectedContact))}, onNavigateToSettings = { onNavigate(Settings) })
