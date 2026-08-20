@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
@@ -20,6 +21,7 @@ import com.example.ft_hangouts.ui.helpfunctions.*
 fun ContactListScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
+    headerColor: Color,
     onNavigateToMain: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToContact: (Contact) -> Unit)
@@ -27,23 +29,22 @@ fun ContactListScreen(
     var contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
     fun reloadScreen() {contacts = contactDao.getAllContacts()}
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Contact List Screen",
-            style = MaterialTheme.typography.headlineLarge
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        ButtontoMain(onNavigateToMain = onNavigateToMain, "To Main Screen")
-        Spacer(modifier = Modifier.height(24.dp))
-        ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
-        Spacer(modifier = Modifier.height(24.dp))
-        ButtonCreateContact(contactDao = contactDao, onContactCreated = {reloadScreen()})
-        Spacer(modifier = Modifier.height(24.dp))
-        ContactList(contacts = contacts, onContactClick = onNavigateToContact)
-        Spacer(modifier = Modifier.height(16.dp))
+        modifier = modifier.fillMaxSize()) {
+        AppHeader(title = "Contacts", headerColor = headerColor)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            ButtontoMain(onNavigateToMain = onNavigateToMain, "To Main Screen")
+            Spacer(modifier = Modifier.height(24.dp))
+            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+            Spacer(modifier = Modifier.height(24.dp))
+            ButtonCreateContact(contactDao = contactDao, onContactCreated = { reloadScreen() })
+            Spacer(modifier = Modifier.height(24.dp))
+            ContactList(contacts = contacts, onContactClick = onNavigateToContact)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
 @Composable

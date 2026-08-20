@@ -21,7 +21,9 @@ import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Message
 import com.example.ft_hangouts.db.MessageDao
 import com.example.ft_hangouts.db.MessageDirection
-import com.example.ft_hangouts.ui.helpfunctions.*
+import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
+import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
+import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

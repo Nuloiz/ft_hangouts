@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.ft_hangouts.ui.helpfunctions.AppHeader
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
 import com.example.ft_hangouts.ui.helpfunctions.HeaderColorManager
 
@@ -31,24 +31,15 @@ import com.example.ft_hangouts.ui.helpfunctions.HeaderColorManager
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
+    headerColor: Color,
     currentHeaderColor: Color,
     onHeaderColorChanged: (Color) -> Unit,
     onNavigateToMain: () -> Unit,
     onNavigateToStart: () -> Unit)
 {
-    val context = LocalContext.current
-
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Settings",
-            style = MaterialTheme.typography.headlineLarge
-        )
-        Spacer(modifier = Modifier.height(24.dp))
+        modifier = modifier.fillMaxSize()) {
+        AppHeader(title = "Settings", headerColor = headerColor)
         HeaderColorPicker(
             currentColor = currentHeaderColor,
             onColorSelected = onHeaderColorChanged
@@ -63,12 +54,13 @@ fun SettingsScreen(
 
 @Composable
 fun HeaderColorPicker(
+    modifier: Modifier = Modifier,
     currentColor: Color,
     onColorSelected: (Color) -> Unit
 ) {
     val context = LocalContext.current
     val colorRows = HeaderColorManager.AVAILABLE_COLORS.chunked(6)
-    Column {
+    Column (modifier = modifier.padding(16.dp)){
         Text(
             text = "Header Color",
             style = MaterialTheme.typography.titleMedium
