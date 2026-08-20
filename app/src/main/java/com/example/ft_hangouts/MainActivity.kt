@@ -19,6 +19,7 @@ import com.example.ft_hangouts.ui.AppScreens.*
 import com.example.ft_hangouts.ui.AppScreens
 import com.example.ft_hangouts.ui.AppScreenRouter
 import com.example.ft_hangouts.db.ContactDao
+import com.example.ft_hangouts.ui.helpfunctions.HeaderColorManager
 import com.example.ft_hangouts.db.MessageDao
 import com.example.ft_hangouts.ui.theme.Ft_hangoutsTheme
 import java.text.SimpleDateFormat
@@ -32,6 +33,8 @@ class MainActivity : ComponentActivity() {
         val contactDao = ContactDao(this)
         val messageDao = MessageDao(this)
         setContent {
+            val context = LocalContext.current
+            var headerColor by remember { mutableStateOf(HeaderColorManager.getSavedColor(context))}
             BackgroundLifecycleTracker()
             Ft_hangoutsTheme {
                 var currentScreen by remember { mutableStateOf<AppScreens>(Start) }
