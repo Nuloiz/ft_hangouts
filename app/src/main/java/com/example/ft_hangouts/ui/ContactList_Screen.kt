@@ -12,8 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
+import com.example.ft_hangouts.ui.helpfunctions.AppHeader
+import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
+import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
 import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
-import com.example.ft_hangouts.ui.helpfunctions.*
+import com.example.ft_hangouts.ui.helpfunctions.Translations
 
 //Buttons: -> MainScreen, -> ContactScreen, -> Settingsscreen, -> CreateContact
 
@@ -22,6 +25,7 @@ fun ContactListScreen(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
     headerColor: Color,
+    currentLanguage: String,
     onNavigateToMain: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToContact: (Contact) -> Unit)
@@ -30,17 +34,17 @@ fun ContactListScreen(
     fun reloadScreen() {contacts = contactDao.getAllContacts()}
     Column(
         modifier = modifier.fillMaxSize()) {
-        AppHeader(title = "Contacts", headerColor = headerColor)
+        AppHeader(title = Translations.tr(("contacts"), currentLanguage), headerColor = headerColor)
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            ButtontoMain(onNavigateToMain = onNavigateToMain, "To Main Screen")
+            ButtontoMain(onNavigateToMain = onNavigateToMain, Translations.tr(("to_main_screen"), currentLanguage))
             Spacer(modifier = Modifier.height(24.dp))
-            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, Translations.tr(("settings"), currentLanguage))
             Spacer(modifier = Modifier.height(24.dp))
-            ButtonCreateContact(contactDao = contactDao, onContactCreated = { reloadScreen() })
+            ButtonCreateContact(contactDao = contactDao, currentLanguage = currentLanguage, onContactCreated = { reloadScreen() })
             Spacer(modifier = Modifier.height(24.dp))
             ContactList(contacts = contacts, onContactClick = onNavigateToContact)
             Spacer(modifier = Modifier.height(16.dp))
@@ -103,11 +107,12 @@ fun ContactListItem(
 @Composable
 fun ButtonCreateContact(
     contactDao: ContactDao,
+    currentLanguage: String,
     onContactCreated: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     Button(onClick = { showDialog = true }) {
-        Text("Create Contact")
+        Text(Translations.tr(("create_contact"), currentLanguage))
     }
     if (showDialog) {
         ContactFormDialog(

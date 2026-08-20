@@ -20,7 +20,11 @@ import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Message
 import com.example.ft_hangouts.db.MessageDao
-import com.example.ft_hangouts.ui.helpfunctions.*
+import com.example.ft_hangouts.ui.helpfunctions.AppHeader
+import com.example.ft_hangouts.ui.helpfunctions.ButtontoContactList
+import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
+import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
+import com.example.ft_hangouts.ui.helpfunctions.Translations
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -37,6 +41,7 @@ fun MainScreen(
     contactDao: ContactDao,
     messageDao: MessageDao,
     headerColor: Color,
+    currentLanguage: String,
     onNavigateToSettings: () -> Unit,
     onNavigateToContactList: () -> Unit,
     onNavigateToChat: (Contact) -> Unit
@@ -55,7 +60,7 @@ fun MainScreen(
     fun reloadScreen() {chatItems = loadChatItems() }
     Column(
         modifier = modifier.fillMaxSize()) {
-        AppHeader(title = "Main Screen", headerColor = headerColor)
+        AppHeader(title = Translations.tr(("main_screen"), currentLanguage), headerColor = headerColor)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -64,11 +69,11 @@ fun MainScreen(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+                ButtontoSettings(onNavigateToSettings = onNavigateToSettings, Translations.tr(("settings"), currentLanguage))
                 Spacer(modifier = Modifier.height(16.dp))
-                ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "Contacts")
+                ButtontoContactList(onNavigateToContactList = onNavigateToContactList,  Translations.tr(("contacts"), currentLanguage))
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { reloadScreen() }) { Text("refresh") }
+                Button(onClick = { reloadScreen() }) { Text( Translations.tr(("refresh"), currentLanguage)) }
             }
             Spacer(modifier = Modifier.height(16.dp))
             ChatList(
@@ -76,10 +81,12 @@ fun MainScreen(
                     .weight(1f)
                     .fillMaxWidth(),
                 chatItems = chatItems,
+                currentLanguage = currentLanguage,
                 onContactClick = onNavigateToChat
             )
             NewChatButton(
                 contactDao = contactDao,
+                currentLanguage = currentLanguage,
                 onNavigateToChat = onNavigateToChat,
                 onContactCreated = { reloadScreen() })
         }
@@ -90,6 +97,7 @@ fun MainScreen(
 fun ChatList(
     modifier: Modifier = Modifier,
     chatItems: List<MainChatItem>,
+    currentLanguage: String,
     onContactClick: (Contact) -> Unit
 ) {
     LazyColumn(
@@ -99,6 +107,7 @@ fun ChatList(
         items(chatItems) { item ->
             ChatListItem(
                 item = item,
+                currentLanguage = currentLanguage,
                 onClick = { onContactClick(item.contact) }
             )
         }
@@ -108,6 +117,7 @@ fun ChatList(
 @Composable
 fun ChatListItem(
     item: MainChatItem,
+    currentLanguage: String,
     onClick: () -> Unit
 ) {
     Card(
@@ -141,7 +151,7 @@ fun ChatListItem(
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = item.latmessage?.body ?: "Empty Chat",
+                text = item.latmessage?.body ?:  Translations.tr(("empty_chat"), currentLanguage),
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (item.latmessage != null) Color.Unspecified else Color.Gray,
                 maxLines = 1,
@@ -155,6 +165,7 @@ fun ChatListItem(
 fun NewChatButton(
     modifier: Modifier = Modifier,
     contactDao: ContactDao,
+    currentLanguage: String,
     onNavigateToChat: (Contact) -> Unit,
     onContactCreated: () -> Unit
 ) {
@@ -167,19 +178,18 @@ fun NewChatButton(
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(vertical = 8.dp)
-    ) { Text("New Chat") }
+    ) { Text(Translations.tr(("new_chat"), currentLanguage)) }
     if (showSelectionDialog) {
         AlertDialog(
             onDismissRequest = { showSelectionDialog = false },
-            title = { Text("Start New Chat") },
-            text = { Text("New or Existing Contact") },
+            title = { Text(Translations.tr(("start_chat"), currentLanguage)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showSelectionDialog = false
                         showContactPickerList = true
                     }
-                ) { Text("Choose Contact") }
+                ) { Text(Translations.tr(("select_contact"), currentLanguage)) }
             },
             dismissButton = {
                 TextButton(
@@ -187,7 +197,7 @@ fun NewChatButton(
                         showSelectionDialog = false
                         showCreateContactDialog = true
                     }
-                ) { Text("New Contact") }
+                ) { Text(Translations.tr(("create_contact"), currentLanguage)) }
             }
         )
     }
@@ -196,10 +206,10 @@ fun NewChatButton(
 
         AlertDialog(
             onDismissRequest = { showContactPickerList = false },
-            title = { Text("Choose Contact") },
+            title = { Text(Translations.tr(("select_contact"), currentLanguage)) },
             text = {
                 if (contacts.isEmpty()) {
-                    Text("No Contacts")
+                    Text(Translations.tr(("no_contact"), currentLanguage))
                 } else {
                     LazyColumn(
                         modifier = Modifier
@@ -234,7 +244,7 @@ fun NewChatButton(
             },
             confirmButton = {
                 TextButton(onClick = { showContactPickerList = false }) {
-                    Text("Return")
+                    Text(Translations.tr(("return"), currentLanguage))
                 }
             }
         )

@@ -1,6 +1,6 @@
 package com.example.ft_hangouts.ui
 
-import  androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +25,7 @@ import com.example.ft_hangouts.db.MessageDirection
 import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
+import com.example.ft_hangouts.ui.helpfunctions.Translations
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,6 +40,7 @@ fun ChatScreen(
     contactDao: ContactDao,
     messageDao: MessageDao,
     headerColor: Color,
+    currentLanguage: String,
     onNavigateToMain: () -> Unit,
     onNavigateToContact: (Contact) ->Unit,
     onNavigateToSettings: () -> Unit) {
@@ -53,21 +55,21 @@ fun ChatScreen(
     }
     Column(modifier = modifier.fillMaxSize()
     ) {
-        ChatHeader(contact = contact, headerColor = headerColor, onNavigateToContact = onNavigateToContact)
+        ChatHeader(contact = contact, headerColor = headerColor, currentLanguage = currentLanguage, onNavigateToContact = onNavigateToContact)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ButtontoMain(onNavigateToMain = onNavigateToMain, "Main Screen")
-            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+            ButtontoMain(onNavigateToMain = onNavigateToMain, Translations.tr(("to_main_screen"), currentLanguage))
+            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, Translations.tr(("settings"), currentLanguage))
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Button(onClick = { refreshChat() }) { Text("reload Chat") }
+            Button(onClick = { refreshChat() }) { Text(Translations.tr(("refresh"), currentLanguage)) }
             Button( //Nur zum Testen einen Delete chat Button, soll später zu Settings oder Contact
                 onClick = {
                     messageDao.delMessagesofContact(contact.id)
@@ -87,7 +89,7 @@ fun ChatScreen(
                 MessageBubble(message = message) }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        MessageInputBar(contact = contact, messageDao = messageDao, onMessageSent = { refreshChat() })
+        MessageInputBar(contact = contact, messageDao = messageDao, currentLanguage = currentLanguage, onMessageSent = { refreshChat() })
         Spacer(modifier = Modifier.height(44.dp))
     }
 }
@@ -95,6 +97,7 @@ fun ChatScreen(
 fun ChatHeader(
     contact: Contact,
     headerColor: Color,
+    currentLanguage: String,
     onNavigateToContact: (Contact) -> Unit
 ) {
     val textColor = if (headerColor.luminance() < 0.5f) Color.White else Color.Black
@@ -117,7 +120,7 @@ fun ChatHeader(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = "Chat with ${contact.name}",
+                text = Translations.tr(("chat_with"), currentLanguage) + contact.name,
                 style = MaterialTheme.typography.headlineSmall,
                 color = textColor
             )
@@ -163,6 +166,7 @@ fun MessageBubble(message: Message) {
 fun MessageInputBar(
     contact: Contact,
     messageDao: MessageDao,
+    currentLanguage: String,
     onMessageSent: () -> Unit
 ) {
     var messageText by remember { mutableStateOf("") }
@@ -176,7 +180,7 @@ fun MessageInputBar(
         OutlinedTextField(
             value = messageText,
             onValueChange = { messageText = it },
-            placeholder = { Text("Type message...") },
+            placeholder = { Text(Translations.tr(("type_message"), currentLanguage)) },
             modifier = Modifier.weight(1f)
         )
         Button(
@@ -207,7 +211,7 @@ fun MessageInputBar(
                 }
             }
         ) {
-            Text("Send")
+            Text(Translations.tr(("send"), currentLanguage))
         }
     }
 }

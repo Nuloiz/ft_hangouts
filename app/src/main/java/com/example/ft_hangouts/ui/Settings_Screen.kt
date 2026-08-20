@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +26,8 @@ import androidx.compose.ui.unit.dp
 import com.example.ft_hangouts.ui.helpfunctions.AppHeader
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
 import com.example.ft_hangouts.ui.helpfunctions.HeaderColorManager
-
+import com.example.ft_hangouts.ui.helpfunctions.LanguageManager
+import com.example.ft_hangouts.ui.helpfunctions.Translations
 //Buttons: -> StartScreen, -> ChangeTheme, -> ChangeLanguage, -> ChangeTime
 
 @Composable
@@ -33,21 +35,22 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
     headerColor: Color,
     currentHeaderColor: Color,
+    currentLanguage: String,
     onHeaderColorChanged: (Color) -> Unit,
+    onLanguageChanged: (String) -> Unit,
     onNavigateToMain: () -> Unit,
     onNavigateToStart: () -> Unit)
 {
     Column(
         modifier = modifier.fillMaxSize()) {
-        AppHeader(title = "Settings", headerColor = headerColor)
-        HeaderColorPicker(
-            currentColor = currentHeaderColor,
-            onColorSelected = onHeaderColorChanged
-        )
+        AppHeader(title = Translations.tr(("settings"), currentLanguage), headerColor = headerColor)
+        HeaderColorPicker(currentColor = currentHeaderColor, currentLanguage = currentLanguage, onColorSelected = onHeaderColorChanged)
         Spacer(modifier = Modifier.height(32.dp))
-        ButtontoMain(onNavigateToMain = onNavigateToMain, "Main Screen")
+        LanguageSelector(currentLanguage = currentLanguage, onLanguageSelected = onLanguageChanged)
         Spacer(modifier = Modifier.height(24.dp))
-        ButtonSettingstoStart(onNavigateToStart = onNavigateToStart)
+        ButtontoMain(onNavigateToMain = onNavigateToMain, Translations.tr(("to_main_screen"), currentLanguage))
+        Spacer(modifier = Modifier.height(24.dp))
+        ButtonSettingstoStart(currentLanguage = currentLanguage, onNavigateToStart = onNavigateToStart)
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -56,13 +59,14 @@ fun SettingsScreen(
 fun HeaderColorPicker(
     modifier: Modifier = Modifier,
     currentColor: Color,
+    currentLanguage: String,
     onColorSelected: (Color) -> Unit
 ) {
     val context = LocalContext.current
     val colorRows = HeaderColorManager.AVAILABLE_COLORS.chunked(6)
     Column (modifier = modifier.padding(16.dp)){
         Text(
-            text = "Header Color",
+            text = Translations.tr(("header_color"), currentLanguage),
             style = MaterialTheme.typography.titleMedium
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -93,9 +97,50 @@ fun HeaderColorPicker(
         }
     }
 }
+
 @Composable
-fun ButtonSettingstoStart(onNavigateToStart: () -> Unit) {
+fun LanguageSelector(
+    currentLanguage: String,
+    onLanguageSelected: (String) -> Unit
+) {
+    val context = LocalContext.current
+    Column {
+        Text(
+            text = if (currentLanguage == LanguageManager.LANG_DE) "Sprache / Language" else "Language / Sprache",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Button(
+                onClick = {
+                    LanguageManager.saveLanguage(context, LanguageManager.LANG_DE)
+                    onLanguageSelected(LanguageManager.LANG_DE)
+                },
+                colors = if (currentLanguage == LanguageManager.LANG_DE) {
+                    ButtonDefaults.buttonColors()
+                } else {
+                    ButtonDefaults.outlinedButtonColors()
+                }
+            ) { Text("Deutsch 🇩🇪") }
+            Button(
+                onClick = {
+                    LanguageManager.saveLanguage(context, LanguageManager.LANG_EN)
+                    onLanguageSelected(LanguageManager.LANG_EN)
+                },
+                colors = if (currentLanguage == LanguageManager.LANG_EN) {
+                    ButtonDefaults.buttonColors()
+                } else {
+                    ButtonDefaults.outlinedButtonColors()
+                }
+            ) { Text("English 🇬🇧") }
+        }
+    }
+}
+@Composable
+fun ButtonSettingstoStart(currentLanguage: String, onNavigateToStart: () -> Unit) {
     Button(onClick = onNavigateToStart) {
-        Text("Back to the roots")
+        Text(Translations.tr(("back_to_the_roots"), currentLanguage))
     }
 }

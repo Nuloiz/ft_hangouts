@@ -13,7 +13,9 @@ import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
 import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
-import com.example.ft_hangouts.ui.helpfunctions.*
+import com.example.ft_hangouts.ui.helpfunctions.ButtontoContactList
+import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
+import com.example.ft_hangouts.ui.helpfunctions.Translations
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> editContact, -> deleteContact
 
@@ -21,62 +23,60 @@ import com.example.ft_hangouts.ui.helpfunctions.*
 fun ContactScreen(
     contact: Contact?,
     contactDao: ContactDao,
+    currentLanguage: String,
     onNavigateToContactList: () -> Unit,
     onNavigateToChat: (Contact) -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
-    //var contact by remember { mutableStateOf(contactDao.getContactById(contact?.id)) }
-    //fun reloadScreen() {contact = contactDao.getContactById(contact?.id)}
     val context = LocalContext.current
     var showMessage by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(showMessage) {
         when (showMessage) {
             "success" -> {
-                Toast.makeText(context, "Deletion successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, Translations.tr(("del_success"), currentLanguage), Toast.LENGTH_SHORT).show()
                 delay(2000)
                 onNavigateToContactList()
                 showMessage = null
             }
             "failed" -> {
-                Toast.makeText(context, "Deletion failed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, Translations.tr(("del_failed"), currentLanguage), Toast.LENGTH_SHORT).show()
                 delay(2000)
                 showMessage = null
             }
         }
     }
-
     Column(modifier = Modifier.padding(16.dp)) {
         if (contact != null) {
             ContactPicture(contact)
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Contact: ${contact.name}", style = MaterialTheme.typography.headlineMedium)
-            Text("Phone: ${contact.phoneNumber}")
+            Text("Name: ${contact.name}", style = MaterialTheme.typography.headlineMedium)
+            Text(Translations.tr(("phone"), currentLanguage) + contact.phoneNumber)
             if (!contact.email.isNullOrBlank()) {
-                Text("Email: ${contact.email}")
+                Text("E-Mail: ${contact.email}")
             }
             if (!contact.address.isNullOrBlank()) {
-                Text("Address: ${contact.address}")
+                Text(Translations.tr(("address"), currentLanguage) + contact.address)
             }
             if (!contact.note.isNullOrBlank()) {
-                Text("Note: ${contact.note}")
+                Text(Translations.tr(("note"), currentLanguage) + contact.note)
             }
             if (!contact.pictureurl.isNullOrBlank()) {
-                Text("Picture: ${contact.pictureurl}")
+                Text(Translations.tr(("picture"), currentLanguage) + contact.pictureurl)
             }
             Spacer(modifier = Modifier.height(16.dp))
         } else {
             Text("Error: Contact not found")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoContactList(onNavigateToContactList = onNavigateToContactList, "zurück zur Contact List")
+        ButtontoContactList(onNavigateToContactList = onNavigateToContactList, Translations.tr(("contacts"), currentLanguage))
         Spacer(modifier = Modifier.height(16.dp))
-        ButtontoSettings(onNavigateToSettings = onNavigateToSettings, "Settings")
+        ButtontoSettings(onNavigateToSettings = onNavigateToSettings, Translations.tr(("settings"), currentLanguage))
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonEditContact(contact = contact, contactDao = contactDao, onContactUpdated = {/*reloadScreen()*/})
+        ButtonEditContact(contact = contact, contactDao = contactDao, currentLanguage = currentLanguage, onContactUpdated = {/*reloadScreen()*/})
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonDeleteContact(contact = contact, contactDao = contactDao, onResult = { success -> showMessage = if (success) "success" else "failed" })
+        ButtonDeleteContact(contact = contact, contactDao = contactDao, currentLanguage = currentLanguage, onResult = { success -> showMessage = if (success) "success" else "failed" })
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { onNavigateToChat(contact!!) }) { Text("Chat öffnen") } //das doppelte Ausrufezeichen überprüfen
+        Button(onClick = { onNavigateToChat(contact!!) }) { Text(Translations.tr(("open_chat"), currentLanguage)) } //das doppelte Ausrufezeichen überprüfen
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -85,6 +85,7 @@ fun ContactScreen(
 fun ButtonDeleteContact(
     contact: Contact?,
     contactDao: ContactDao,
+    currentLanguage: String,
     onResult: (Boolean) -> Unit
 ) {
     Button(onClick = {
@@ -99,7 +100,7 @@ fun ButtonDeleteContact(
             onResult(false)
         }
     }) {
-        Text("Delete Contact")
+        Text(Translations.tr(("delete_contact"), currentLanguage))
     }
 }
 
@@ -107,11 +108,12 @@ fun ButtonDeleteContact(
 fun ButtonEditContact(
     contact: Contact?,
     contactDao: ContactDao,
+    currentLanguage: String,
     onContactUpdated: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     Button(onClick = { if (contact != null) showDialog = true }) {
-        Text("Edit Contact")
+        Text(Translations.tr(("edit_contact"), currentLanguage))
     }
     if (showDialog) {
         ContactFormDialog(
