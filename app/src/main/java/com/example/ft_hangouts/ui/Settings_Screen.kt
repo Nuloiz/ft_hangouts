@@ -67,34 +67,36 @@ fun HeaderColorPicker(
     onColorSelected: (Color) -> Unit
 ) {
     val context = LocalContext.current
-
+    val colorRows = HeaderColorManager.AVAILABLE_COLORS.chunked(6)
     Column {
         Text(
             text = "Header Color",
             style = MaterialTheme.typography.titleMedium
         )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            HeaderColorManager.AVAILABLE_COLORS.forEach { color ->
-                val isSelected = color == currentColor
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .border(
-                            width = if (isSelected) 3.dp else 0.dp,
-                            color = if (isSelected) Color.Black else Color.Transparent,
-                            shape = CircleShape
-                        )
-                        .clickable {
-                            HeaderColorManager.saveColor(context, color)
-                            onColorSelected(color)
-                        }
-                )
+        Spacer(modifier = Modifier.height(12.dp))
+        colorRows.forEach { rowColors ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(bottom = 12.dp)
+            ) {
+                rowColors.forEach { color ->
+                    val isSelected = color == currentColor
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .border(
+                                width = if (isSelected) 3.dp else 1.dp,
+                                color = if (isSelected) Color.Black else Color.LightGray,
+                                shape = CircleShape
+                            )
+                            .clickable {
+                                HeaderColorManager.saveColor(context, color)
+                                onColorSelected(color)
+                            }
+                    )
+                }
             }
         }
     }
