@@ -48,10 +48,12 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(32.dp))
         LanguageSelector(currentLanguage = currentLanguage, onLanguageSelected = onLanguageChanged)
         Spacer(modifier = Modifier.height(24.dp))
+        Column (modifier = modifier.padding(16.dp)){
         ButtontoMain(onNavigateToMain = onNavigateToMain, Translations.tr(("to_main_screen"), currentLanguage))
-        Spacer(modifier = Modifier.height(24.dp))
-        ButtonSettingstoStart(currentLanguage = currentLanguage, onNavigateToStart = onNavigateToStart)
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+            ButtonSettingstoStart(currentLanguage = currentLanguage, onNavigateToStart = onNavigateToStart)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
 
@@ -100,11 +102,12 @@ fun HeaderColorPicker(
 
 @Composable
 fun LanguageSelector(
+    modifier: Modifier = Modifier,
     currentLanguage: String,
     onLanguageSelected: (String) -> Unit
 ) {
     val context = LocalContext.current
-    Column {
+    Column (modifier = modifier.padding(16.dp)){
         Text(
             text = if (currentLanguage == LanguageManager.LANG_DE) "Sprache / Language" else "Language / Sprache",
             style = MaterialTheme.typography.titleMedium
