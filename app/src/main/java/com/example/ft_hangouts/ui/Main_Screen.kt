@@ -24,6 +24,7 @@ import com.example.ft_hangouts.ui.helpfunctions.AppHeader
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoContactList
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
 import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
+import com.example.ft_hangouts.ui.helpfunctions.PhoneCallButton
 import com.example.ft_hangouts.ui.helpfunctions.Translations
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -150,13 +151,28 @@ fun ChatListItem(
                 }
             }
             Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = item.latmessage?.body ?:  Translations.tr(("empty_chat"), currentLanguage),
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (item.latmessage != null) Color.Unspecified else Color.Gray,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = item.latmessage?.body ?: Translations.tr(
+                        ("empty_chat"),
+                        currentLanguage
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (item.latmessage != null) Color.Unspecified else Color.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                PhoneCallButton(
+                    phoneNumber = item.contact.phoneNumber,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(4.dp) // Beliebiges Alignment & Margin
+                )
+            }
         }
     }
 }

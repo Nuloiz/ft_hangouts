@@ -1,5 +1,6 @@
 package com.example.ft_hangouts.ui
 
+import android.R.attr.textColor
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +26,7 @@ import com.example.ft_hangouts.db.MessageDirection
 import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
+import com.example.ft_hangouts.ui.helpfunctions.PhoneCallButton
 import com.example.ft_hangouts.ui.helpfunctions.Translations
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -77,6 +79,10 @@ fun ChatScreen(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) { Text("delete Chat (Test)") }
+            PhoneCallButton(
+                phoneNumber = contact.phoneNumber,
+                modifier = Modifier.size(48.dp)
+            )
         }
         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
         LazyColumn(

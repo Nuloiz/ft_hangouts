@@ -15,6 +15,7 @@ import com.example.ft_hangouts.ui.helpfunctions.ContactFormDialog
 import com.example.ft_hangouts.ui.helpfunctions.ContactPicture
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoContactList
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
+import com.example.ft_hangouts.ui.helpfunctions.PhoneCallButton
 import com.example.ft_hangouts.ui.helpfunctions.Translations
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> editContact, -> deleteContact
@@ -66,6 +67,12 @@ fun ContactScreen(
             Spacer(modifier = Modifier.height(16.dp))
         } else {
             Text("Error: Contact not found")
+        }
+        if (contact != null) {
+            PhoneCallButton(
+                phoneNumber = contact.phoneNumber,
+                modifier = Modifier.size(56.dp)
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         ButtontoContactList(onNavigateToContactList = onNavigateToContactList, Translations.tr(("contacts"), currentLanguage))
