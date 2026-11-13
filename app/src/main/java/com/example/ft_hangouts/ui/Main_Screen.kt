@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -58,10 +60,16 @@ fun MainScreen(
         }
     }
     var chatItems by remember { mutableStateOf(loadChatItems()) }
+    val scrollState = rememberScrollState()
     fun reloadScreen() {chatItems = loadChatItems() }
     Column(
-        modifier = modifier.fillMaxSize()) {
-        AppHeader(title = Translations.tr(("main_screen"), currentLanguage), headerColor = headerColor)
+        modifier = modifier
+            .fillMaxSize()
+            .navigationBarsPadding()){
+        AppHeader(
+            title = Translations.tr(("main_screen"), currentLanguage),
+            headerColor = headerColor,
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()

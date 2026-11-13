@@ -33,11 +33,12 @@ fun ContactListScreen(
     var contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
     fun reloadScreen() {contacts = contactDao.getAllContacts()}
     Column(
-        modifier = modifier.fillMaxSize()) {
+        modifier = modifier.fillMaxSize().navigationBarsPadding()) {
         AppHeader(title = Translations.tr(("contacts"), currentLanguage), headerColor = headerColor)
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .navigationBarsPadding()
                 .padding(16.dp)
         ) {
             ButtontoMain(onNavigateToMain = onNavigateToMain, Translations.tr(("to_main_screen"), currentLanguage))

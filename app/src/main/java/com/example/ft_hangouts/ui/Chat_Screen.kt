@@ -55,7 +55,7 @@ fun ChatScreen(
         if (messagesList.isNotEmpty()) {
             listState.animateScrollToItem(messagesList.size - 1) }
     }
-    Column(modifier = modifier.fillMaxSize()
+    Column(modifier = modifier.fillMaxSize().navigationBarsPadding()
     ) {
         ChatHeader(contact = contact, headerColor = headerColor, currentLanguage = currentLanguage, onNavigateToContact = onNavigateToContact)
         Spacer(modifier = Modifier.height(8.dp))
