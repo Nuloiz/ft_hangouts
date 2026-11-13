@@ -117,6 +117,7 @@ fun ButtonCreateContact(
     if (showDialog) {
         ContactFormDialog(
             isCreateMode = true,
+            currentLanguage = currentLanguage,
             onDismiss = { showDialog = false },
             onSave = { newContact ->
                 contactDao.insertContact(newContact)

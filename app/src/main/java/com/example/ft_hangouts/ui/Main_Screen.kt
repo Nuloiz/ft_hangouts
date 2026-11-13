@@ -268,6 +268,7 @@ fun NewChatButton(
     if (showCreateContactDialog) {
         ContactFormDialog(
             isCreateMode = true,
+            currentLanguage = currentLanguage,
             onDismiss = { showCreateContactDialog = false },
             onSave = { newContact ->
                 val id = contactDao.insertContact(newContact)

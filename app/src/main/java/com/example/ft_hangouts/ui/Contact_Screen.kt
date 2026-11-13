@@ -125,6 +125,7 @@ fun ButtonEditContact(
     if (showDialog) {
         ContactFormDialog(
             isCreateMode = false,
+            currentLanguage = currentLanguage,
             initialContact = contact,
             onDismiss = { showDialog = false },
             onSave = { updatedContact ->

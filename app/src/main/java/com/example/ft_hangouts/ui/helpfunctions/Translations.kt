@@ -30,14 +30,17 @@ object Translations {
         // --- Contact / Contact List Screen ---
         "del_success" to mapOf("de" to "Löschen erfolgreich", "en" to "Deletion successfull"),
         "del_failed" to mapOf("de" to "Löschen gescheitert", "en" to "Deletion failed"),
-        "phone" to mapOf("de" to "Telefon", "en" to "Phone"),
-        "address" to mapOf("de" to "Addresse", "en" to "Address"),
-        "note" to mapOf("de" to "Notizen", "en" to "Note"),
-        "address" to mapOf("de" to "Bild", "en" to "Picture"),
+        "phone" to mapOf("de" to "Telefon: ", "en" to "Phone: "),
+        "phone_number" to mapOf("de" to "Telefonnummer: ", "en" to "Phone number: "),
+        "address" to mapOf("de" to "Addresse: ", "en" to "Address: "),
+        "note" to mapOf("de" to "Notizen: ", "en" to "Notes: "),
         "open_chat" to mapOf("de" to "Chat öffnen", "en" to "Open chat"),
         "delete_contact" to mapOf("de" to "Löschen", "en" to "Delete"),
         "edit_contact" to mapOf("de" to "Bearbeiten", "en" to "Edit"),
         "create_contact" to mapOf("de" to "Neuen Kontakt erstellen", "en" to "Create new contact"),
+        "edit_con" to mapOf("de" to "Kontakt bearbeiten", "en" to "Edit contact"),
+        "create" to mapOf("de" to "Erstellen", "en" to "Create"),
+        "save" to mapOf("de" to "Speichern", "en" to "Save"),
 
     )
     fun tr(key: String, lang: String): String {

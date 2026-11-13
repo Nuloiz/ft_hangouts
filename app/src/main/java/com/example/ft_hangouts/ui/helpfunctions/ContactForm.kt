@@ -15,6 +15,7 @@ import com.example.ft_hangouts.db.Contact
 @Composable
 fun ContactFormDialog(
     isCreateMode: Boolean,
+    currentLanguage: String,
     initialContact: Contact? = null,
     onDismiss: () -> Unit,
     onSave: (Contact) -> Unit
@@ -36,8 +37,8 @@ fun ContactFormDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                if (isCreateMode) "Neuen Kontakt erstellen"
-                else "Kontakt bearbeiten"
+                if (isCreateMode) Translations.tr(("create_contact"), currentLanguage)
+                else Translations.tr(("edit_con"), currentLanguage)
             )
         },
         text = {
@@ -60,7 +61,7 @@ fun ContactFormDialog(
                         val combined = "+" + digits
                         if (combined.length <= 20) phoneNumber = combined
                     },
-                    label = "Telefonnummer",
+                    label = Translations.tr(("phone_number"), currentLanguage) + "(optional)",
                     error = validation.phoneError,
                     maxLength = 20,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
@@ -73,7 +74,7 @@ fun ContactFormDialog(
                             email = input
                         }
                     },
-                    label = "Email (optional)",
+                    label = "E-mail: (optional)",
                     error = validation.emailError,
                     maxLength = 50,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
@@ -82,7 +83,7 @@ fun ContactFormDialog(
                 ContactTextField(
                     value = address,
                     onValueChange = { if (it.length <= 50) address = it },
-                    label = "Adresse (optional)",
+                    label = Translations.tr(("adress"), currentLanguage) + "(optional)",
                     error = validation.addressError,
                     maxLength = 50,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
@@ -91,7 +92,7 @@ fun ContactFormDialog(
                 ContactTextField(
                     value = note,
                     onValueChange = { if (it.length <= 500) note = it },
-                    label = "Notiz (optional)",
+                    label = Translations.tr(("note"), currentLanguage) + "(optional)",
                     error = validation.noteError,
                     maxLength = 500,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
@@ -131,12 +132,12 @@ fun ContactFormDialog(
                     }
                 }
             ) {
-                Text(if (isCreateMode) "Erstellen" else "Speichern")
+                Text(if (isCreateMode) Translations.tr(("create"), currentLanguage) else Translations.tr(("save"), currentLanguage))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Abbrechen")
+                Text(Translations.tr(("cancel"), currentLanguage))
             }
         }
     )
