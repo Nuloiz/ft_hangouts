@@ -5,5 +5,5 @@ sealed class AppScreens(val route: String) {
     object Settings : AppScreens("settings")
     object ContactList : AppScreens("contactlist")
     data class Contact(val selectedContact: com.example.ft_hangouts.db.Contact) : AppScreens("contact")
-    data class Chat(val selectedContact: com.example.ft_hangouts.db.Contact) : AppScreens("contact")
+    data class Chat(val selectedContact: com.example.ft_hangouts.db.Contact) : AppScreens("chat")
 }

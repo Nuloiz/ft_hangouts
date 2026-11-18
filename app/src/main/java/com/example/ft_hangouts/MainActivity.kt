@@ -10,6 +10,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
@@ -37,10 +38,27 @@ class MainActivity : ComponentActivity() {
             var headerColor by remember { mutableStateOf(HeaderColorManager.getSavedColor(context))}
             BackgroundLifecycleTracker()
             Ft_hangoutsTheme {
-                var currentScreen by remember { mutableStateOf<AppScreens>(Main) }
+                var currentRoute by rememberSaveable { mutableStateOf(Main.route) }
+                var selectedContactId by rememberSaveable { mutableStateOf(-1L) }
+                val currentScreen: AppScreens = when (currentRoute) {
+                    Settings.route -> Settings
+                    ContactList.route -> ContactList
+                    "contact" -> contactDao.getContactById(selectedContactId)?.let { Contact(it) }
+                        ?: Main
+
+                    "chat" -> contactDao.getContactById(selectedContactId)?.let { Chat(it) } ?: Main
+                    else -> Main
+                }
                 AppScreenRouter(
                     currentScreen = currentScreen,
-                    onNavigate = { newScreen: AppScreens -> currentScreen = newScreen },
+                    onNavigate = { newScreen: AppScreens ->
+                        currentRoute = newScreen.route
+                        selectedContactId = when (newScreen) {
+                            is Contact -> newScreen.selectedContact.id
+                            is Chat -> newScreen.selectedContact.id
+                            else -> -1L
+                        }
+                    },
                     contactDao = contactDao,
                     messageDao = messageDao
                 )
