@@ -48,7 +48,6 @@ fun AppHeader(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
                 color = textColor)
-            LiveClock()
         }
     }
 }
