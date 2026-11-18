@@ -16,6 +16,7 @@ import com.example.ft_hangouts.db.Contact
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.window.DialogProperties
 
@@ -114,7 +115,7 @@ fun ContactFormDialog(
                             ContactTextField(
                                 value = address,
                                 onValueChange = { if (it.length <= 50) address = it },
-                                label = Translations.tr("adress", currentLanguage) + " (opt.)",
+                                label = Translations.tr("address", currentLanguage) + " (opt.)",
                                 error = validation.addressError,
                                 maxLength = 50,
                                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
@@ -237,8 +238,23 @@ private fun ContactTextField(
         label = { Text(label) },
         isError = error != null,
         supportingText = {
-            error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-            Text("${value.length}/$maxLength")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                if (error != null) {
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp)
+                    )
+                } else {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+                Text(text = "${value.length}/$maxLength")
+            }
         },
         keyboardOptions = keyboardOptions,
         modifier = Modifier.fillMaxWidth()
