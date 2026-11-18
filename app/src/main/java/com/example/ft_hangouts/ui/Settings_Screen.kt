@@ -33,6 +33,7 @@ import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
 import com.example.ft_hangouts.ui.helpfunctions.HeaderColorManager
 import com.example.ft_hangouts.ui.helpfunctions.LanguageManager
 import com.example.ft_hangouts.ui.helpfunctions.Translations
+import com.example.ft_hangouts.ui.helpfunctions.CoordinateButton
 //Buttons: -> StartScreen, -> ChangeTheme, -> ChangeLanguage, -> ChangeTime
 
 @Composable
@@ -62,11 +63,17 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(32.dp))
         LanguageSelector(currentLanguage = currentLanguage, onLanguageSelected = onLanguageChanged)
         Spacer(modifier = Modifier.height(24.dp))
-        Column (modifier = modifier.padding(16.dp)){
-        ButtontoMain(onNavigateToMain = onNavigateToMain, Translations.tr(("to_main_screen"), currentLanguage))
-            Spacer(modifier = Modifier.height(24.dp))
-            ButtonSettingstoStart(currentLanguage = currentLanguage, onNavigateToStart = onNavigateToStart)
-            Spacer(modifier = Modifier.height(16.dp))
+        CoordinateButton(
+            modifier = modifier.padding(16.dp)
+        ) {
+            ButtontoMain(
+                onNavigateToMain = onNavigateToMain,
+                Translations.tr("to_main_screen", currentLanguage)
+            )
+            ButtonSettingstoStart(
+                currentLanguage = currentLanguage,
+                onNavigateToStart = onNavigateToStart
+            )
         }
     }
 }
