@@ -42,6 +42,8 @@ object Translations {
         "create" to mapOf("de" to "Erstellen", "en" to "Create"),
         "save" to mapOf("de" to "Speichern", "en" to "Save"),
 
+        // --- ContactForm ---
+        "ChooPic" to mapOf("de" to "Bild auswählen", "en" to "Choose Picture"),
     )
     fun tr(key: String, lang: String): String {
         return translations[key]?.get(lang) ?: key

@@ -176,6 +176,7 @@ fun ContactFormDialog(
                 GalleryImagePickerField(
                     launcher = imageLauncher,
                     pictureUrl = pictureUrl,
+                    currentLanguage = currentLanguage,
                     onPictureUrlChanged = { newUrl: String? -> pictureUrl = newUrl ?: "" }
                 )
             }
