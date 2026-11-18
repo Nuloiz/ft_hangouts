@@ -159,7 +159,7 @@ fun ContactFormDialog(
                     ContactTextField(
                         value = address,
                         onValueChange = { if (it.length <= 50) address = it },
-                        label = Translations.tr("adress", currentLanguage) + "(optional)",
+                        label = Translations.tr("address", currentLanguage) + "(optional)",
                         error = validation.addressError,
                         maxLength = 50,
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
