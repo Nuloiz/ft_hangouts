@@ -21,6 +21,7 @@ fun containsForbiddenSqlChars(value: String): Boolean {
 }
 
 fun validateContactInput(
+    currentLanguage: String,
     name: String,
     phone: String,
     email: String,
@@ -36,60 +37,60 @@ fun validateContactInput(
     var pictureUrlError: String? = null
 
     if (name.isBlank()) {
-        nameError = "Name darf nicht leer sein."
+        nameError = Translations.tr("nameE1", currentLanguage)
     } else if (name.length > 20) {
-        nameError = "Name maximal 20 Zeichen."
+        nameError = Translations.tr("nameE2", currentLanguage)
     } else if (containsForbiddenSqlChars(name)) {
-        nameError = "Ungültige Zeichen im Namen."
+        nameError = Translations.tr("zeichenE", currentLanguage)
     }
 
     if (phone.isBlank()) {
-        phoneError = "Telefonnummer erforderlich."
+        phoneError = Translations.tr("phoneE1", currentLanguage)
     } else if (!phone.startsWith("+")) {
-        phoneError = "Muss mit + beginnen."
+        phoneError = Translations.tr("phoneE2", currentLanguage)
     } else {
         val digits = phone.drop(1)
         if (!digits.all { it.isDigit() }) {
-            phoneError = "Nur Ziffern nach + erlaubt."
+            phoneError = Translations.tr("phoneE3", currentLanguage)
         }
     }
     if (phone.length < 5 || phone.length > 20) {
-        phoneError = "Telefonnummer 5–20 Zeichen."
+        phoneError = Translations.tr("phoneE4", currentLanguage)
     }
 
     if (email.isNotBlank()) {
         if (email.length > 50) {
-            emailError = "Email maximal 50 Zeichen."
+            emailError = Translations.tr("mailE1", currentLanguage)
         } else if (' ' in email || '\n' in email) {
-            emailError = "Keine Leerzeichen in Email."
+            emailError = Translations.tr("mailE2", currentLanguage)
         } else if (!email.contains("@") || !email.contains(".")) {
-            emailError = "Email braucht @ und ."
+            emailError = Translations.tr("mailE3", currentLanguage)
         } else if (containsForbiddenSqlChars(email)) {
-            emailError = "Ungültige Zeichen in Email."
+            emailError = Translations.tr("zeichenE", currentLanguage)
         }
     }
 
     if (address.isNotBlank()) {
-        if (address.length > 50) {
-            addressError = "Adresse maximal 50 Zeichen."
+        if (address.length > 100) {
+            addressError = Translations.tr("adressE1", currentLanguage)
         } else if (containsForbiddenSqlChars(address)) {
-            addressError = "Ungültige Zeichen in Adresse."
+            addressError = Translations.tr("zeichenE", currentLanguage)
         }
     }
 
     if (note.isNotBlank()) {
         if (note.length > 500) {
-            noteError = "Notiz maximal 500 Zeichen."
+            noteError = Translations.tr("noteE1", currentLanguage)
         } else if (containsForbiddenSqlChars(note)) {
-            noteError = "Ungültige Zeichen in Notiz."
+            noteError = Translations.tr("zeichenE", currentLanguage)
         }
     }
 
     if (pictureUrl.isNotBlank()) {
         if (pictureUrl.length > 100) {
-            pictureUrlError = "Bild-URL maximal 100 Zeichen."
+            pictureUrlError = Translations.tr("pictureE1", currentLanguage)
         } else if (containsForbiddenSqlChars(pictureUrl)) {
-            pictureUrlError = "Ungültige Zeichen in Bild-URL."
+            pictureUrlError = Translations.tr("zeichenE", currentLanguage)
         }
     }
 

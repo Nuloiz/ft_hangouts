@@ -185,6 +185,7 @@ fun ContactFormDialog(
             Button(
                 onClick = {
                     val result = validateContactInput(
+                        currentLanguage = currentLanguage,
                         name = name,
                         phone = phoneNumber,
                         email = email,

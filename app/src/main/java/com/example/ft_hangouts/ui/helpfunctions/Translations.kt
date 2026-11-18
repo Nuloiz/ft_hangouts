@@ -44,6 +44,19 @@ object Translations {
 
         // --- ContactForm ---
         "ChooPic" to mapOf("de" to "Bild auswählen", "en" to "Choose Picture"),
+        "nameE1" to mapOf("de" to "Name darf nicht leer sein", "en" to "Name cannot be empty"),
+        "nameE2" to mapOf("de" to "Name kann maximal 20 Zeichen lang sein", "en" to "Name cannot be longer than 20 characters"),
+        "zeichenE" to mapOf("de" to "Enthält ungültige Zeichen", "en" to "Includes invalid characters"),
+        "phoneE1" to mapOf("de" to "Telefonnummer darf nicht leer sein", "en" to "Phone number cannot be empty"),
+        "phoneE2" to mapOf("de" to "Telefonnumer muss mit + beginnen", "en" to "Phone number has to start with +"),
+        "phoneE3" to mapOf("de" to "Nur Ziffern sind erlaubt", "en" to "Only digits are allowed"),
+        "phoneE4" to mapOf("de" to "Telefonnumer kann nur zwischen 5 - 20 Ziffern lang sein", "en" to "Phone number has to be betweeen 5 - 20 digits"),
+        "mailE1" to mapOf("de" to "E-Mail kann maximal 500 Zeichen lang sein", "en" to "E-mail cannot be longer than 500 characters"),
+        "mailE2" to mapOf("de" to "Keine Leerzeichen in der E-Mail erlaubt", "en" to "No Spaces allowed in E-mail"),
+        "mailE3" to mapOf("de" to "E-Mail braucht ein @ und ein .", "en" to "E-mail needs an @ and a ."),
+        "adressE1" to mapOf("de" to "Adresse kann maximal 100 Zeichen lang sein", "en" to "Adress cannot be longre than 100 chararcters"),
+        "noteE1" to mapOf("de" to "Notizen können maximal 500 Zeichen lang sein", "en" to "Notes cannot be longer than 500 characters"),
+        "pictureE1" to mapOf("de" to "Die Bild-URL kann maximal 100 Zeichen lang sein", "en" to "The picture-URL cannot be longer than 100 characters"),
     )
     fun tr(key: String, lang: String): String {
         return translations[key]?.get(lang) ?: key
