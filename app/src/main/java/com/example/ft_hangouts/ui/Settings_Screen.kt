@@ -36,7 +36,6 @@ import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
 import com.example.ft_hangouts.ui.helpfunctions.HeaderColorManager
 import com.example.ft_hangouts.ui.helpfunctions.LanguageManager
 import com.example.ft_hangouts.ui.helpfunctions.Translations
-import com.example.ft_hangouts.ui.helpfunctions.CoordinateButton
 //Buttons: -> StartScreen, -> ChangeTheme, -> ChangeLanguage, -> ChangeTime
 
 @Composable

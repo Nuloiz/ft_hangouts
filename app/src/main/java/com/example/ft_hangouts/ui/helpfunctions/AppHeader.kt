@@ -51,22 +51,3 @@ fun AppHeader(
         }
     }
 }
-
-@Composable
-fun LiveClock(modifier: Modifier = Modifier) {
-    var currentTime by remember {
-        mutableStateOf(SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date()))
-    }
-    LaunchedEffect(Unit) {
-        while (true) {
-            currentTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-            delay(1000L)
-        }
-    }
-    Text(
-        text = currentTime,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = modifier
-    )
-}
