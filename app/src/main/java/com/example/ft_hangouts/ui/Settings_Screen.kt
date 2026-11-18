@@ -1,5 +1,7 @@
 package com.example.ft_hangouts.ui
 
+import android.content.res.Configuration
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -44,30 +47,59 @@ fun SettingsScreen(
     currentLanguage: String,
     onHeaderColorChanged: (Color) -> Unit,
     onLanguageChanged: (String) -> Unit,
-    onNavigateToMain: () -> Unit,)
-{
+    onNavigateToMain: () -> Unit,
+) {
     val scrollState = rememberScrollState()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     Column(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
             .navigationBarsPadding()
             .verticalScroll(scrollState),
-            horizontalAlignment = Alignment.Start) {
+        horizontalAlignment = Alignment.Start
+    ) {
         AppHeader(
-            title = Translations.tr(("settings"), currentLanguage),
+            title = Translations.tr("settings", currentLanguage),
             headerColor = headerColor,
         )
-        HeaderColorPicker(currentColor = currentHeaderColor, currentLanguage = currentLanguage, onColorSelected = onHeaderColorChanged)
-        Spacer(modifier = Modifier.height(32.dp))
-        LanguageSelector(currentLanguage = currentLanguage, onLanguageSelected = onLanguageChanged)
-        Spacer(modifier = Modifier.height(24.dp))
-        CoordinateButton(
-            modifier = modifier.padding(16.dp)
-        ) {
+        if (isLandscape) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                HeaderColorPicker(
+                    modifier = Modifier.weight(1f),
+                    currentColor = currentHeaderColor,
+                    currentLanguage = currentLanguage,
+                    onColorSelected = onHeaderColorChanged
+                )
+                LanguageSelector(
+                    modifier = Modifier.weight(1f),
+                    currentLanguage = currentLanguage,
+                    onLanguageSelected = onLanguageChanged
+                )
+            }
+        } else {
+            HeaderColorPicker(
+                currentColor = currentHeaderColor,
+                currentLanguage = currentLanguage,
+                onColorSelected = onHeaderColorChanged
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            LanguageSelector(
+                currentLanguage = currentLanguage,
+                onLanguageSelected = onLanguageChanged
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier.padding(16.dp)) {
             ButtontoMain(
                 onNavigateToMain = onNavigateToMain,
-                Translations.tr("to_main_screen", currentLanguage)
+                message = Translations.tr("to_main_screen", currentLanguage)
             )
         }
     }

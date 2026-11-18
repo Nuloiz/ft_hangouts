@@ -18,6 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import android.content.res.Configuration
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalConfiguration
+import kotlinx.coroutines.delay
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Message
@@ -49,25 +53,28 @@ fun MainScreen(
     onNavigateToContactList: () -> Unit,
     onNavigateToChat: (Contact) -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     fun loadChatItems(): List<MainChatItem> {
-        return contactDao.getAllContacts().map { contact ->
-            MainChatItem(
-                contact = contact,
-                latmessage = messageDao.getlatestMessageofContact(contact.id)
-            )
-        }.sortedByDescending { chatItem ->
-            chatItem.latmessage?.timestamp ?: 0L
-        }
+        return contactDao.getAllContacts().map {
+            contact -> MainChatItem(contact = contact, latmessage = messageDao.getlatestMessageofContact(contact.id))
+        }.sortedByDescending {chatItem -> chatItem.latmessage?.timestamp ?: 0L}
     }
     var chatItems by remember { mutableStateOf(loadChatItems()) }
-    val scrollState = rememberScrollState()
-    fun reloadScreen() {chatItems = loadChatItems() }
+    fun reloadScreen() {chatItems = loadChatItems()}
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1500L)
+            chatItems = loadChatItems()
+        }
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
-            .navigationBarsPadding()){
+            .navigationBarsPadding()
+    ) {
         AppHeader(
-            title = Translations.tr(("main_screen"), currentLanguage),
+            title = Translations.tr("main_screen", currentLanguage),
             headerColor = headerColor,
         )
         Column(
@@ -76,15 +83,25 @@ fun MainScreen(
                 .padding(16.dp)
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                ButtontoSettings(onNavigateToSettings = onNavigateToSettings, Translations.tr(("settings"), currentLanguage))
-                Spacer(modifier = Modifier.height(16.dp))
-                ButtontoContactList(onNavigateToContactList = onNavigateToContactList,  Translations.tr(("contacts"), currentLanguage))
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { reloadScreen() }) { Text( Translations.tr(("refresh"), currentLanguage)) }
+                ButtontoSettings(onNavigateToSettings = onNavigateToSettings, message = Translations.tr("settings", currentLanguage))
+                ButtontoContactList(onNavigateToContactList = onNavigateToContactList, message = Translations.tr("contacts", currentLanguage))
+                Button(onClick = {reloadScreen()}) {Text(Translations.tr("refresh", currentLanguage))}
+                if (isLandscape) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    NewChatButton(
+                        contactDao = contactDao,
+                        currentLanguage = currentLanguage,
+                        onNavigateToChat = onNavigateToChat,
+                        onContactCreated = {reloadScreen()},
+                        isCompact = true
+                    )
+                }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             ChatList(
                 modifier = Modifier
                     .weight(1f)
@@ -93,11 +110,15 @@ fun MainScreen(
                 currentLanguage = currentLanguage,
                 onContactClick = onNavigateToChat
             )
-            NewChatButton(
-                contactDao = contactDao,
-                currentLanguage = currentLanguage,
-                onNavigateToChat = onNavigateToChat,
-                onContactCreated = { reloadScreen() })
+            if (!isLandscape) {
+                NewChatButton(
+                    contactDao = contactDao,
+                    currentLanguage = currentLanguage,
+                    onNavigateToChat = onNavigateToChat,
+                    onContactCreated = {reloadScreen()},
+                    isCompact = false
+                )
+            }
         }
     }
 }
@@ -113,11 +134,11 @@ fun ChatList(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(chatItems) { item ->
-            ChatListItem(
+        items(chatItems) {
+            item -> ChatListItem(
                 item = item,
                 currentLanguage = currentLanguage,
-                onClick = { onContactClick(item.contact) }
+                onClick = {onContactClick(item.contact)}
             )
         }
     }
@@ -132,7 +153,7 @@ fun ChatListItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable {onClick()}
     ) {
         Column(
             modifier = Modifier
@@ -148,8 +169,8 @@ fun ChatListItem(
                     text = item.contact.name,
                     style = MaterialTheme.typography.headlineSmall
                 )
-                item.latmessage?.let { msg ->
-                    val dateStr = SimpleDateFormat("HH:mm - dd.MM.", Locale.getDefault())
+                item.latmessage?.let {
+                    msg -> val dateStr = SimpleDateFormat("HH:mm - dd.MM.", Locale.getDefault())
                         .format(Date(msg.timestamp))
                     Text(
                         text = dateStr,
@@ -165,20 +186,20 @@ fun ChatListItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = item.latmessage?.body ?: Translations.tr(
-                        ("empty_chat"),
-                        currentLanguage
-                    ),
+                    text = item.latmessage?.body ?: Translations.tr("empty_chat", currentLanguage),
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (item.latmessage != null) Color.Unspecified else Color.Gray,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
                 )
                 PhoneCallButton(
                     phoneNumber = item.contact.phoneNumber,
                     modifier = Modifier
                         .size(40.dp)
-                        .padding(4.dp) // Beliebiges Alignment & Margin
+                        .padding(4.dp)
                 )
             }
         }
@@ -191,18 +212,25 @@ fun NewChatButton(
     contactDao: ContactDao,
     currentLanguage: String,
     onNavigateToChat: (Contact) -> Unit,
-    onContactCreated: () -> Unit
-) {
-    var showSelectionDialog by remember { mutableStateOf(false) }
-    var showContactPickerList by remember { mutableStateOf(false) }
-    var showCreateContactDialog by remember { mutableStateOf(false) }
-    Button(
-        onClick = { showSelectionDialog = true },
-        modifier = modifier
+    onContactCreated: () -> Unit,
+    isCompact: Boolean = false)
+{
+    var showSelectionDialog by remember {mutableStateOf(false)}
+    var showContactPickerList by remember {mutableStateOf(false)}
+    var showCreateContactDialog by remember {mutableStateOf(false)}
+    val buttonModifier = if (isCompact) {
+        modifier
+    } else {
+        modifier
             .fillMaxWidth()
-            .navigationBarsPadding()
             .padding(vertical = 8.dp)
-    ) { Text(Translations.tr(("new_chat"), currentLanguage)) }
+    }
+    Button(
+        onClick = {showSelectionDialog = true},
+        modifier = buttonModifier
+    ) {
+        Text(Translations.tr("new_chat", currentLanguage))
+    }
     if (showSelectionDialog) {
         AlertDialog(
             onDismissRequest = { showSelectionDialog = false },
@@ -213,7 +241,9 @@ fun NewChatButton(
                         showSelectionDialog = false
                         showContactPickerList = true
                     }
-                ) { Text(Translations.tr(("select_contact"), currentLanguage)) }
+                ) {
+                    Text(Translations.tr(("select_contact"), currentLanguage))
+                }
             },
             dismissButton = {
                 TextButton(
@@ -221,13 +251,14 @@ fun NewChatButton(
                         showSelectionDialog = false
                         showCreateContactDialog = true
                     }
-                ) { Text(Translations.tr(("create_contact"), currentLanguage)) }
+                ) {
+                    Text(Translations.tr(("create_contact"), currentLanguage))
+                }
             }
         )
     }
     if (showContactPickerList) {
         val contacts = remember { contactDao.getAllContacts() }
-
         AlertDialog(
             onDismissRequest = { showContactPickerList = false },
             title = { Text(Translations.tr(("select_contact"), currentLanguage)) },
