@@ -1,23 +1,26 @@
 package com.example.ft_hangouts.ui
 
-import android.R.attr.textColor
-import androidx.compose.foundation.layout.*
+import android.content.res.Configuration
+import android.telephony.SmsManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import android.telephony.SmsManager
+import androidx.compose.ui.text.style.TextOverflow
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.db.Message
@@ -28,6 +31,7 @@ import com.example.ft_hangouts.ui.helpfunctions.ButtontoMain
 import com.example.ft_hangouts.ui.helpfunctions.ButtontoSettings
 import com.example.ft_hangouts.ui.helpfunctions.PhoneCallButton
 import com.example.ft_hangouts.ui.helpfunctions.Translations
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -44,61 +48,98 @@ fun ChatScreen(
     headerColor: Color,
     currentLanguage: String,
     onNavigateToMain: () -> Unit,
-    onNavigateToContact: (Contact) ->Unit,
-    onNavigateToSettings: () -> Unit) {
+    onNavigateToContact: (Contact) -> Unit,
+    onNavigateToSettings: () -> Unit
+) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     var messagesList by remember {
-        mutableStateOf(messageDao.getMessagesofContact(contact.id))}
-    fun refreshChat() {
-        messagesList = messageDao.getMessagesofContact(contact.id) }
+        mutableStateOf(messageDao.getMessagesofContact(contact.id))
+    }
+    fun refreshChat() {messagesList = messageDao.getMessagesofContact(contact.id)}
+    LaunchedEffect(contact.id) {
+        while (true) {
+            delay(1000L)
+            val latestMessages = messageDao.getMessagesofContact(contact.id)
+            if (latestMessages.size != messagesList.size) {
+                messagesList = latestMessages
+            }
+        }
+    }
     val listState = rememberLazyListState()
     LaunchedEffect(messagesList.size) {
         if (messagesList.isNotEmpty()) {
-            listState.animateScrollToItem(messagesList.size - 1) }
-    }
-    Column(modifier = modifier.fillMaxSize().navigationBarsPadding()
-    ) {
-        ChatHeader(contact = contact, headerColor = headerColor, currentLanguage = currentLanguage, onNavigateToContact = onNavigateToContact)
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ButtontoMain(onNavigateToMain = onNavigateToMain, Translations.tr(("to_main_screen"), currentLanguage))
-            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, Translations.tr(("settings"), currentLanguage))
+            listState.animateScrollToItem(messagesList.size - 1)
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+    }
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+            .imePadding()
+    ) {
+        ChatHeader(
+            contact = contact,
+            headerColor = headerColor,
+            currentLanguage = currentLanguage,
+            onNavigateToContact = onNavigateToContact
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
-            Button(onClick = { refreshChat() }) { Text(Translations.tr(("refresh"), currentLanguage)) }
-            Button( //Nur zum Testen einen Delete chat Button, soll später zu Settings oder Contact
-                onClick = {
-                    messageDao.delMessagesofContact(contact.id)
-                    refreshChat()
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-            ) { Text("delete Chat (Test)") }
-            PhoneCallButton(
-                phoneNumber = contact.phoneNumber,
-                modifier = Modifier.size(48.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val btnModifier = if (isLandscape) Modifier.weight(1f) else Modifier
+                Button(
+                    onClick = onNavigateToMain,
+                    modifier = btnModifier,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = Translations.tr("to_main_screen", currentLanguage),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Button(
+                    onClick = onNavigateToSettings,
+                    modifier = btnModifier,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = Translations.tr("settings", currentLanguage),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                items(messagesList) {
+                    message -> MessageBubble(message = message)
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            MessageInputBar(
+                contact = contact,
+                messageDao = messageDao,
+                currentLanguage = currentLanguage,
+                onMessageSent = { refreshChat() }
             )
         }
-        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-            items(messagesList) { message ->
-                MessageBubble(message = message) }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        MessageInputBar(contact = contact, messageDao = messageDao, currentLanguage = currentLanguage, onMessageSent = { refreshChat() })
-        Spacer(modifier = Modifier.height(44.dp))
     }
 }
+
 @Composable
 fun ChatHeader(
     contact: Contact,
@@ -117,27 +158,37 @@ fun ChatHeader(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier.size(64.dp)
-        ) {
-            ContactPicture(contact = contact)}
+        Box(modifier = Modifier.size(56.dp)) {
+            ContactPicture(contact = contact)
+        }
         Spacer(modifier = Modifier.width(12.dp))
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .padding(end = 8.dp)
         ) {
             Text(
-                text = Translations.tr(("chat_with"), currentLanguage) + contact.name,
+                text = Translations.tr("chat_with", currentLanguage) + contact.name,
                 style = MaterialTheme.typography.headlineSmall,
-                color = textColor
+                color = textColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = contact.phoneNumber,
                 style = MaterialTheme.typography.bodyMedium,
-                color = subTextColor
+                color = subTextColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
+        PhoneCallButton(
+            phoneNumber = contact.phoneNumber,
+            modifier = Modifier.size(48.dp)
+        )
     }
 }
+
 @Composable
 fun MessageBubble(message: Message) {
     val isSent = message.direction == MessageDirection.SENT
@@ -151,6 +202,7 @@ fun MessageBubble(message: Message) {
     ) {
         Column(
             modifier = Modifier
+                .widthIn(max = 280.dp)
                 .background(bubbleColor, shape = RoundedCornerShape(12.dp))
                 .padding(12.dp)
         ) {
@@ -175,9 +227,8 @@ fun MessageInputBar(
     currentLanguage: String,
     onMessageSent: () -> Unit
 ) {
-    var messageText by remember { mutableStateOf("") }
+    var messageText by rememberSaveable { mutableStateOf("") }
     val context = LocalContext.current
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -186,8 +237,9 @@ fun MessageInputBar(
         OutlinedTextField(
             value = messageText,
             onValueChange = { messageText = it },
-            placeholder = { Text(Translations.tr(("type_message"), currentLanguage)) },
-            modifier = Modifier.weight(1f)
+            placeholder = { Text(Translations.tr("type_message", currentLanguage)) },
+            modifier = Modifier.weight(1f),
+            maxLines = 3
         )
         Button(
             onClick = {
@@ -200,7 +252,6 @@ fun MessageInputBar(
                             SmsManager.getDefault()
                         }
                         smsManager.sendTextMessage(contact.phoneNumber, null, messageText, null, null)
-
                         val newMessage = Message(
                             contactId = contact.id,
                             body = messageText,
@@ -210,14 +261,13 @@ fun MessageInputBar(
                         messageDao.insMessage(newMessage)
                         messageText = ""
                         onMessageSent()
-
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
             }
         ) {
-            Text(Translations.tr(("send"), currentLanguage))
+            Text(Translations.tr("send", currentLanguage))
         }
     }
 }

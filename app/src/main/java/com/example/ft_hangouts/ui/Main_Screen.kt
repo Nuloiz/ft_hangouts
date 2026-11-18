@@ -89,7 +89,6 @@ fun MainScreen(
             ) {
                 ButtontoSettings(onNavigateToSettings = onNavigateToSettings, message = Translations.tr("settings", currentLanguage))
                 ButtontoContactList(onNavigateToContactList = onNavigateToContactList, message = Translations.tr("contacts", currentLanguage))
-                Button(onClick = {reloadScreen()}) {Text(Translations.tr("refresh", currentLanguage))}
                 if (isLandscape) {
                     Spacer(modifier = Modifier.weight(1f))
                     NewChatButton(
