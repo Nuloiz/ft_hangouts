@@ -184,6 +184,7 @@ fun ChatHeader(
         }
         PhoneCallButton(
             phoneNumber = contact.phoneNumber,
+            tint = textColor,
             modifier = Modifier.size(48.dp)
         )
     }

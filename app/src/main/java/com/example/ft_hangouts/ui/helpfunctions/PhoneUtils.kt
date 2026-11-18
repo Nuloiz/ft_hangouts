@@ -7,9 +7,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 fun makePhoneCall(context: Context, phoneNumber: String) {
@@ -21,19 +25,23 @@ fun makePhoneCall(context: Context, phoneNumber: String) {
     }
 }
 
+
 @Composable
 fun PhoneCallButton(
     phoneNumber: String,
     modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
 ) {
     val context = LocalContext.current
     IconButton(
         onClick = { makePhoneCall(context, phoneNumber) },
-        modifier = modifier
+        modifier = modifier,
+        colors = IconButtonDefaults.iconButtonColors(contentColor = tint)
     ) {
         Icon(
             imageVector = Icons.Default.Phone,
             contentDescription = "Anrufen",
+            tint = tint,
         )
     }
 }

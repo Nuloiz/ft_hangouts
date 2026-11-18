@@ -35,6 +35,7 @@ import com.example.ft_hangouts.ui.helpfunctions.Translations
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.ui.platform.LocalLocale
 
 //Buttons: -> ChatScreen, -> ContactListScreen, -> Settingsscreen, -> NewChat (-> ExistingUser, -> NewUser), -> AktualisierenMain
 
@@ -169,7 +170,7 @@ fun ChatListItem(
                     style = MaterialTheme.typography.headlineSmall
                 )
                 item.latmessage?.let {
-                    msg -> val dateStr = SimpleDateFormat("HH:mm - dd.MM.", Locale.getDefault())
+                    msg -> val dateStr = SimpleDateFormat("HH:mm - dd.MM.", LocalLocale.current.platformLocale)
                         .format(Date(msg.timestamp))
                     Text(
                         text = dateStr,
