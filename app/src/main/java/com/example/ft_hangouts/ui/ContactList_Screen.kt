@@ -10,6 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import android.content.res.Configuration
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextOverflow
 import com.example.ft_hangouts.db.Contact
 import com.example.ft_hangouts.db.ContactDao
 import com.example.ft_hangouts.ui.helpfunctions.AppHeader
@@ -28,28 +33,140 @@ fun ContactListScreen(
     currentLanguage: String,
     onNavigateToMain: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToContact: (Contact) -> Unit)
-{
+    onNavigateToContact: (Contact) -> Unit
+) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     var contacts by remember { mutableStateOf(contactDao.getAllContacts()) }
-    fun reloadScreen() {contacts = contactDao.getAllContacts()}
+    fun reloadScreen() { contacts = contactDao.getAllContacts() }
     Column(
-        modifier = modifier.fillMaxSize().navigationBarsPadding()) {
-        AppHeader(title = Translations.tr(("contacts"), currentLanguage), headerColor = headerColor)
+        modifier = modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+    ) {
+        AppHeader(
+            title = Translations.tr("contacts", currentLanguage),
+            headerColor = headerColor
+        )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .navigationBarsPadding()
                 .padding(16.dp)
         ) {
-            ButtontoMain(onNavigateToMain = onNavigateToMain, Translations.tr(("to_main_screen"), currentLanguage))
-            Spacer(modifier = Modifier.height(24.dp))
-            ButtontoSettings(onNavigateToSettings = onNavigateToSettings, Translations.tr(("settings"), currentLanguage))
-            Spacer(modifier = Modifier.height(24.dp))
-            ButtonCreateContact(contactDao = contactDao, currentLanguage = currentLanguage, onContactCreated = { reloadScreen() })
-            Spacer(modifier = Modifier.height(24.dp))
-            ContactList(contacts = contacts, onContactClick = onNavigateToContact)
+            if (isLandscape) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = onNavigateToMain,
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = Translations.tr("to_main_screen", currentLanguage),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Button(
+                        onClick = onNavigateToSettings,
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = Translations.tr("settings", currentLanguage),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    ButtonCreateContact(
+                        modifier = Modifier.weight(1f),
+                        contactDao = contactDao,
+                        currentLanguage = currentLanguage,
+                        onContactCreated = { reloadScreen() }
+                    )
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = onNavigateToMain,
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = Translations.tr("to_main_screen", currentLanguage),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Button(
+                        onClick = onNavigateToSettings,
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = Translations.tr("settings", currentLanguage),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                ButtonCreateContact(
+                    modifier = Modifier.fillMaxWidth(),
+                    contactDao = contactDao,
+                    currentLanguage = currentLanguage,
+                    onContactCreated = { reloadScreen() }
+                )
+            }
             Spacer(modifier = Modifier.height(16.dp))
+            ContactList(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contacts = contacts,
+                onContactClick = onNavigateToContact
+            )
         }
+    }
+}
+
+@Composable
+fun ButtonCreateContact(
+    modifier: Modifier = Modifier,
+    contactDao: ContactDao,
+    currentLanguage: String,
+    onContactCreated: () -> Unit
+) {
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    Button(
+        onClick = { showDialog = true },
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = Translations.tr("create_contact", currentLanguage),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+    if (showDialog) {
+        ContactFormDialog(
+            isCreateMode = true,
+            currentLanguage = currentLanguage,
+            onDismiss = { showDialog = false },
+            onSave = { newContact ->
+                contactDao.insertContact(newContact)
+                showDialog = false
+                onContactCreated()
+            }
+        )
     }
 }
 @Composable
@@ -102,29 +219,5 @@ fun ContactListItem(
                 )
             }
         }
-    }
-}
-
-@Composable
-fun ButtonCreateContact(
-    contactDao: ContactDao,
-    currentLanguage: String,
-    onContactCreated: () -> Unit
-) {
-    var showDialog by remember { mutableStateOf(false) }
-    Button(onClick = { showDialog = true }) {
-        Text(Translations.tr(("create_contact"), currentLanguage))
-    }
-    if (showDialog) {
-        ContactFormDialog(
-            isCreateMode = true,
-            currentLanguage = currentLanguage,
-            onDismiss = { showDialog = false },
-            onSave = { newContact ->
-                contactDao.insertContact(newContact)
-                showDialog = false
-                onContactCreated()
-            }
-        )
     }
 }

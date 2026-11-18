@@ -13,6 +13,11 @@ import android.net.Uri
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import com.example.ft_hangouts.db.Contact
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun ContactFormDialog(
@@ -22,14 +27,15 @@ fun ContactFormDialog(
     onDismiss: () -> Unit,
     onSave: (Contact) -> Unit
 ) {
-    var name by remember { mutableStateOf(initialContact?.name ?: "") }
-    var phoneNumber by remember { mutableStateOf(initialContact?.phoneNumber ?: "+") }
-    var email by remember { mutableStateOf(initialContact?.email ?: "") }
-    var address by remember { mutableStateOf(initialContact?.address ?: "") }
-    var note by remember { mutableStateOf(initialContact?.note ?: "") }
-    var pictureUrl by remember { mutableStateOf(initialContact?.pictureurl ?: "") }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    var name by rememberSaveable { mutableStateOf(initialContact?.name ?: "") }
+    var phoneNumber by rememberSaveable { mutableStateOf(initialContact?.phoneNumber ?: "+") }
+    var email by rememberSaveable { mutableStateOf(initialContact?.email ?: "") }
+    var address by rememberSaveable { mutableStateOf(initialContact?.address ?: "") }
+    var note by rememberSaveable { mutableStateOf(initialContact?.note ?: "") }
+    var pictureUrl by rememberSaveable { mutableStateOf(initialContact?.pictureurl ?: "") }
     var validation by remember { mutableStateOf(ContactValidationResult()) }
-
     val imageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -37,74 +43,136 @@ fun ContactFormDialog(
     }
     AlertDialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        modifier = Modifier
+            .fillMaxWidth(if (isLandscape) 0.85f else 0.92f)
+            .imePadding(),
         title = {
             Text(
-                if (isCreateMode) Translations.tr(("create_contact"), currentLanguage)
-                else Translations.tr(("edit_con"), currentLanguage)
+                if (isCreateMode) Translations.tr("create_contact", currentLanguage)
+                else Translations.tr("edit_con", currentLanguage)
             )
         },
         text = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .imePadding()
-                ) {
-                ContactTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = "Name",
-                    error = validation.nameError,
-                    maxLength = 20,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
-                )
-
-                ContactTextField(
-                    value = phoneNumber,
-                    onValueChange = { input ->
-                        var new = input
-                        if (!new.startsWith("+")) new = "+${new.trimStart('+')}"
-                        val digits = new.drop(1).filter { it.isDigit() }
-                        val combined = "+" + digits
-                        if (combined.length <= 20) phoneNumber = combined
-                    },
-                    label = Translations.tr(("phone_number"), currentLanguage) + "(optional)",
-                    error = validation.phoneError,
-                    maxLength = 20,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
-                )
-
-                ContactTextField(
-                    value = email,
-                    onValueChange = { input ->
-                        if (input.length <= 50 && !input.contains(' ') && !input.contains('\n')) {
-                            email = input
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                if (isLandscape) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            ContactTextField(
+                                value = name,
+                                onValueChange = { name = it },
+                                label = "Name",
+                                error = validation.nameError,
+                                maxLength = 20,
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+                            )
                         }
-                    },
-                    label = "E-mail: (optional)",
-                    error = validation.emailError,
-                    maxLength = 50,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
-                )
-
-                ContactTextField(
-                    value = address,
-                    onValueChange = { if (it.length <= 50) address = it },
-                    label = Translations.tr(("adress"), currentLanguage) + "(optional)",
-                    error = validation.addressError,
-                    maxLength = 50,
-                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
-                )
-
+                        Box(modifier = Modifier.weight(1f)) {
+                            ContactTextField(
+                                value = phoneNumber,
+                                onValueChange = { input ->
+                                    var new = input
+                                    if (!new.startsWith("+")) new = "+${new.trimStart('+')}"
+                                    val digits = new.drop(1).filter { it.isDigit() }
+                                    val combined = "+" + digits
+                                    if (combined.length <= 20) phoneNumber = combined
+                                },
+                                label = Translations.tr("phone_number", currentLanguage) + " (opt.)",
+                                error = validation.phoneError,
+                                maxLength = 20,
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Box(modifier = Modifier.weight(1f)) {
+                            ContactTextField(
+                                value = email,
+                                onValueChange = { input ->
+                                    if (input.length <= 50 && !input.contains(' ') && !input.contains('\n')) {
+                                        email = input
+                                    }
+                                },
+                                label = "E-mail (opt.)",
+                                error = validation.emailError,
+                                maxLength = 50,
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+                            )
+                        }
+                        Box(modifier = Modifier.weight(1f)) {
+                            ContactTextField(
+                                value = address,
+                                onValueChange = { if (it.length <= 50) address = it },
+                                label = Translations.tr("adress", currentLanguage) + " (opt.)",
+                                error = validation.addressError,
+                                maxLength = 50,
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+                            )
+                        }
+                    }
+                } else {
+                    ContactTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = "Name",
+                        error = validation.nameError,
+                        maxLength = 20,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+                    )
+                    ContactTextField(
+                        value = phoneNumber,
+                        onValueChange = { input ->
+                            var new = input
+                            if (!new.startsWith("+")) new = "+${new.trimStart('+')}"
+                            val digits = new.drop(1).filter { it.isDigit() }
+                            val combined = "+" + digits
+                            if (combined.length <= 20) phoneNumber = combined
+                        },
+                        label = Translations.tr("phone_number", currentLanguage) + "(optional)",
+                        error = validation.phoneError,
+                        maxLength = 20,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
+                    )
+                    ContactTextField(
+                        value = email,
+                        onValueChange = { input ->
+                            if (input.length <= 50 && !input.contains(' ') && !input.contains('\n')) {
+                                email = input
+                            }
+                        },
+                        label = "E-mail: (optional)",
+                        error = validation.emailError,
+                        maxLength = 50,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+                    )
+                    ContactTextField(
+                        value = address,
+                        onValueChange = { if (it.length <= 50) address = it },
+                        label = Translations.tr("adress", currentLanguage) + "(optional)",
+                        error = validation.addressError,
+                        maxLength = 50,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+                    )
+                }
                 ContactTextField(
                     value = note,
                     onValueChange = { if (it.length <= 500) note = it },
-                    label = Translations.tr(("note"), currentLanguage) + "(optional)",
+                    label = Translations.tr("note", currentLanguage) + "(optional)",
                     error = validation.noteError,
                     maxLength = 500,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
                 )
-
                 GalleryImagePickerField(
                     launcher = imageLauncher,
                     pictureUrl = pictureUrl,
@@ -124,7 +192,6 @@ fun ContactFormDialog(
                         pictureUrl = pictureUrl
                     )
                     validation = result
-
                     if (result.isValid) {
                         val contact = Contact(
                             id = initialContact?.id ?: 0L,
@@ -139,12 +206,15 @@ fun ContactFormDialog(
                     }
                 }
             ) {
-                Text(if (isCreateMode) Translations.tr(("create"), currentLanguage) else Translations.tr(("save"), currentLanguage))
+                Text(
+                    if (isCreateMode) Translations.tr("create", currentLanguage)
+                    else Translations.tr("save", currentLanguage)
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(Translations.tr(("cancel"), currentLanguage))
+                Text(Translations.tr("cancel", currentLanguage))
             }
         }
     )
