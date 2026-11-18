@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
             var headerColor by remember { mutableStateOf(HeaderColorManager.getSavedColor(context))}
             BackgroundLifecycleTracker()
             Ft_hangoutsTheme {
-                var currentScreen by remember { mutableStateOf<AppScreens>(Start) }
+                var currentScreen by remember { mutableStateOf<AppScreens>(Main) }
                 AppScreenRouter(
                     currentScreen = currentScreen,
                     onNavigate = { newScreen: AppScreens -> currentScreen = newScreen },

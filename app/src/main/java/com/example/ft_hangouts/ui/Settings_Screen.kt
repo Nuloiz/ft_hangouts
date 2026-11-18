@@ -44,8 +44,7 @@ fun SettingsScreen(
     currentLanguage: String,
     onHeaderColorChanged: (Color) -> Unit,
     onLanguageChanged: (String) -> Unit,
-    onNavigateToMain: () -> Unit,
-    onNavigateToStart: () -> Unit)
+    onNavigateToMain: () -> Unit,)
 {
     val scrollState = rememberScrollState()
     Column(
@@ -69,10 +68,6 @@ fun SettingsScreen(
             ButtontoMain(
                 onNavigateToMain = onNavigateToMain,
                 Translations.tr("to_main_screen", currentLanguage)
-            )
-            ButtonSettingstoStart(
-                currentLanguage = currentLanguage,
-                onNavigateToStart = onNavigateToStart
             )
         }
     }
@@ -160,11 +155,5 @@ fun LanguageSelector(
                 }
             ) { Text("English 🇬🇧") }
         }
-    }
-}
-@Composable
-fun ButtonSettingstoStart(currentLanguage: String, onNavigateToStart: () -> Unit) {
-    Button(onClick = onNavigateToStart) {
-        Text(Translations.tr(("back_to_the_roots"), currentLanguage))
     }
 }
