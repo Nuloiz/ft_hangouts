@@ -60,7 +60,7 @@ fun LiveClock(modifier: Modifier = Modifier) {
     LaunchedEffect(Unit) {
         while (true) {
             currentTime = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-            delay(1000L) // Wait 1 second
+            delay(1000L)
         }
     }
     Text(
